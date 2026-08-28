@@ -45,9 +45,11 @@ Recorded so they stop taking up room in anyone's head.
 
 ## Added 2026-08-28, after the first deploy
 
-- **Point Vercel's build command at `npm run build`** instead of the
+- ~~**Point Vercel's build command at `npm run build`** instead of the
   auto-detected `vite build`, so `tsc -b` runs in CI and a type error cannot
-  ship silently. Phase 5. See DECISIONS.md, deployment entry.
+  ship silently.~~ **Done 2026-08-28**, pinned in `vercel.json` and confirmed in
+  a real build log. Pulled forward from Phase 5 because connecting the repo made
+  deploys automatic, which turned it from untidy into load-bearing.
 
 ## Added 2026-08-28, Phase 2
 
@@ -64,3 +66,15 @@ Recorded so they stop taking up room in anyone's head.
   dry". Revisit the ramp with a wider top end.
 - **A proper visual design pass on the deployed site**, since the browser pane
   could not paint during Phase 2 and layout was verified geometrically instead.
+
+## Added 2026-08-28, after wiring the repo to Vercel
+
+- **Nothing tests the typecheck gate.** `tsc -b` is now confirmed to *run* on
+  every deploy, but we have never confirmed it *blocks* one. Proving it would
+  mean pushing a deliberate type error to a public repo and reverting it. Worth
+  doing once, in a throwaway branch rather than on `main`, before the submission
+  window closes.
+- **`vercel dev` is the documented local workflow but nothing enforces it.**
+  Running `npm run dev` still works and silently omits `/api`, which is the
+  dev/prod divergence that caused the Phase 1 bug in the first place. A note in
+  README.md would be cheap.

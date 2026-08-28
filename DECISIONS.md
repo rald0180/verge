@@ -323,3 +323,84 @@ Local development now runs `vercel dev`, not `vite dev`, so `/api` exists
 locally and dev matches production. This is a direct consequence of the Phase 1
 deployment bug — a green local build that disagreed with the deployed artefact.
 `.claude/launch.json` keeps a `verge-vite-only` entry for frontend-only work.
+
+---
+
+## 2026-08-28 — Repository, and closing the CI gap
+
+Two submission deliverables now exist and are public:
+**https://github.com/rald0180/verge** and **https://verge-ebon.vercel.app**.
+
+### One commit, not a reconstructed history
+
+The repository was initialised after Phases 1 and 2 were already built, so it
+holds a single honest initial commit that says exactly that. Manufacturing a
+plausible-looking sequence of per-phase commits would have been inventing
+history — the same category of dishonesty as inventing a data source, and
+trivially detectable by anyone reading timestamps. `DECISIONS.md` carries the
+real chronology instead, which is what this file is for.
+
+`CLAUDE.md` is deliberately public. It is the most interesting artefact in the
+repo and removing it would leave this log referring to a document nobody can
+read. It does mean the project is now committed in public to the standard it
+sets: every flood figure labelled indicative, no invented numbers, an honest
+build log. Those are checkable claims now rather than private intentions.
+Phases 3 and 4 are where that bites, because that is where a language model
+starts producing dollar costs and cooling estimates that would be easy to let
+stand unlabelled.
+
+### Caught during the push
+
+`.env.example` was silently untracked. When Vercel linked the project it
+appended a broad `.env*` rule to `.gitignore`, which swallowed the template
+documenting `ANTHROPIC_API_KEY` — a file README.md links to. Fixed with a
+`!.env.example` negation. Found by auditing what was actually staged rather
+than trusting the ignore file, which is the same habit that caught the api
+import bug: check the artefact, not the intention.
+
+The remote was then audited directly through the GitHub API rather than
+locally: no `.env`, no `.env.local`, no `.vercel/`, no `node_modules`, no
+`dist` among the 63 published paths.
+
+### Push-to-deploy, and why the build command had to be fixed first
+
+Connecting the repo to Vercel changes the risk profile of the Phase 1 bug.
+Deploys were deliberate — run `vercel --prod`, watch it. They are now automatic,
+so a type error would ship while nobody is looking. Vercel's auto-detected Vite
+preset does not necessarily run `tsc -b`, which is how the broken `api/` imports
+reached production in the first place while the deployment reported READY.
+
+`vercel.json` now pins `buildCommand` to `npm run build`, kept in the repo
+rather than as a dashboard setting so the choice is visible and travels with a
+clone. Confirmed in a real build log, not assumed:
+
+    > tsc -b && vite build
+    Build Completed in /vercel/output [14s]
+
+The connection itself was verified the same way. A push at 16:27:00 produced a
+production deployment at 16:27:02 with no CLI command, Vercel created the
+`verge-git-main-…` branch alias that only exists on a connected repo, and the
+alias table confirmed `verge-ebon.vercel.app` had moved to the git-triggered
+build.
+
+### A verification that was wrong, and how
+
+The first attempt to prove the live URL had moved compared the hashed JS asset
+filename served by the alias against the new deployment. They matched the old
+build, and the conclusion drawn was "the live URL is still on the old build".
+
+That was wrong. The only change in the commit was adding `vercel.json`, which
+does not affect the JS bundle, so both builds emit an identical content hash.
+The test could not distinguish the two deployments and never could have. The
+alias-to-deployment mapping was the correct check and showed the opposite.
+
+Worth recording because it is the same failure as trusting `readyState: READY`:
+a check that returns a confident answer while measuring the wrong thing is more
+dangerous than no check. A content hash is evidence of *what* was built, never
+of *which deployment is serving*.
+
+### Still not proven
+
+`tsc -b` is confirmed to run on every deploy. It has never been confirmed to
+*block* one. That test requires deliberately pushing a broken commit, and it is
+in BACKLOG.md rather than quietly assumed.
