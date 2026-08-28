@@ -141,6 +141,7 @@ verge/
     │   └── types.ts          # single source of truth for every shape
     ├── hooks/
     │   ├── useRiskProfile.ts
+    │   ├── usePlan.ts         # added Phase 3: /api/plan state machine
     │   └── useStreetAudit.ts
     └── components/
         ├── layout/       AppShell, Header, SectionHeading

@@ -404,3 +404,165 @@ of *which deployment is serving*.
 `tsc -b` is confirmed to run on every deploy. It has never been confirmed to
 *block* one. That test requires deliberately pushing a broken commit, and it is
 in BACKLOG.md rather than quietly assumed.
+
+---
+
+## 2026-08-28 — Phase 3, Adaptation Planner
+
+The first feature where Claude produces the numbers rather than reading them
+off an API. Everything below is built and verified except the model call
+itself, which is blocked on `ANTHROPIC_API_KEY` — see "Not yet verified".
+
+### Read the API reference instead of working from memory
+
+Loaded the `claude-api` skill before writing `api/plan.ts` rather than writing
+from recall, and it changed three decisions:
+
+- **Structured outputs, not tool use.** `output_config.format` with a JSON
+  schema constrains the response shape directly. It also has real limits that
+  would have cost an hour of debugging: the schema validator rejects
+  `minimum`/`maximum`/`minLength`, so every range in `PLAN_SCHEMA` is
+  unconstrained and clamped in `toAction` instead.
+- **Thinking is ON by default on Claude Opus 5**, and shares `max_tokens` with
+  the response text. A budget sized for the answer alone would have truncated
+  mid-plan. Set to 12,000.
+- **`temperature` would have returned a 400.** It is removed on this model.
+  The instinct to reach for it to vary output is now simply wrong.
+
+Effort is set to `medium` rather than the `high` default. This is structured
+generation behind a 60-second function timeout with a person watching a
+spinner, and effort is the honest latency lever — the guidance is explicitly to
+sweep down from the default rather than inherit it. Worth re-testing against
+real output once there is output to compare.
+
+`maxDuration = 60` is exported from the function because Vercel's default is 10
+seconds, which a thinking model will exceed.
+
+### The renter gate is code, not a prompt
+
+CLAUDE.md section 2 says renters get renter-legal actions only, and calls it a
+detail judges notice. It is enforced twice, and the second one is the real one:
+
+1. The prompt states the constraint and defines what renter-safe means.
+2. `api/plan.ts` **filters `renterSafe === false` out of the response** before
+   anything is returned.
+
+A model asked nicely for renter-safe actions will occasionally suggest
+replacing a roof. Asking is not enforcing. The `renterSafe` field has existed
+on `AdaptationAction` since Phase 1 for exactly this.
+
+Every field of every action is also validated against the type before it
+reaches React — structured outputs make malformed JSON unlikely, not
+impossible, and one bad action is dropped rather than failing the whole plan.
+An action returning `high` cost below `low` is reordered rather than rejected;
+that is a fumble, not a lie.
+
+### The bundle nearly tripled, and the first fix did not work
+
+Wiring the PDF export took the bundle from **202 kB gzipped to 643 kB** — a
+3.2× increase for a button most visitors never press.
+
+The first fix was to `await import('@react-pdf/renderer')` inside the click
+handler. It changed nothing, because `PlanList` still had a *static*
+`import { PlanPdf }` at the top, and `PlanPdf` imports the library at module
+scope. One static import anywhere in the chain anchors the whole dependency
+into the main bundle no matter how lazily the call site loads it.
+
+Both imports are now dynamic and resolved together. The library is a separate
+1.3 MB chunk (436 kB gzipped) fetched only on click, and the main bundle is
+back to **205 kB gzipped** — 3 kB above Phase 2 for a whole feature.
+
+The lesson generalises: lazy-loading is a property of the *import graph*, not
+of the call site. Checking the built output caught this; reading the code did
+not, because the code looked correct.
+
+### Also decided
+
+- **The plan resets when a new address is searched.** A plan is about one risk
+  profile, and leaving a stale one under a new profile would be quietly wrong.
+- **Only four numbers and a suburb name go to the API.** Not the full profile:
+  the coordinates, the street address and the evidence arrays stay in the
+  browser. The planner does not need to know exactly where someone lives to
+  tell them their roof is dark.
+- **`usePlan.ts` added to `src/hooks/`**, and CLAUDE.md's tree amended to
+  match — same pattern as `api/geocode.ts` in Phase 2.
+
+### Verified
+
+Validation paths, locally through `vercel dev`: wrong method → 405, junk body →
+400, invalid enum (`tenure: "squatting"`) → 400, missing key → typed 503.
+
+The whole client chain end to end: address search → risk profile → the
+"Build my plan" button unlocking on a real profile → POST → typed error
+surfaced through `ErrorState` with the server's own wording.
+
+### Verified against the live model
+
+The key landed and the first call failed with a 400: *"Your credit balance is
+too low."* The key was fine; the account was empty. Worth recording because the
+first fix was not to the code — it was **adding a `console.error` to the catch
+block**. The handler returns deliberately generic messages so upstream detail
+never leaks to users, and it logged nothing, so the failure was an
+undiagnosable 502. With one log line the cause was obvious in a single attempt.
+Generic user-facing errors and silent server-side failures are not the same
+trade-off, and shipping the first without the second is a mistake.
+
+That failure also exposed a real bug: every `APIError` was marked
+`retryable: true`, including 400s. A 400 fails identically forever, so the UI
+would have offered a Try Again button that could never work. Now only 5xx is
+retryable.
+
+**Cost, measured rather than estimated.** Three runs: 1,288–1,303 input tokens
+and 1,668–2,097 output tokens, which at $5/$25 per million is **$0.048–$0.059
+per plan**. The earlier 5–10 cent estimate was right, at the low end. Thinking
+tokens are roughly two thirds of the output and therefore of the cost.
+
+**Effort, swept rather than assumed.** `low` returns in ~23s against ~29s for
+`medium`, but drops the ceiling-insulation top-up — the highest-impact
+intervention available to a Perth house — in favour of filler scoring 35. Six
+seconds is not worth that on the feature carrying Originality. Kept `medium`;
+observed range 28–35s against the 60s function ceiling.
+
+The honest fix for a 30-second wait was not a faster model but **saying so**:
+the loading copy now tells the user it takes about half a minute and why.
+
+**Output quality is genuinely specific.** The plans reference the actual scores
+and know the place — older Subiaco homes, thin ceiling insulation, unshaded
+west-facing glass, water restrictions, 40-degree days. Not generic
+sustainability advice, which was the risk.
+
+**Sorting works.** Impact per dollar, descending, verified across a full plan.
+
+**PDF export works.** A 7,586-byte `application/pdf` blob, produced from the
+lazily-loaded chunk, no errors.
+
+### The renter gate has never fired
+
+`{returned: 7, dropped: 0}` on every renter run, including a deliberately
+tempting case — renting, budget over $2,000, heat at 88, where structural work
+is most attractive. The model respects the constraint unprompted.
+
+So the filter is correct defensive code that has never actually caught
+anything. That is worth stating plainly rather than reporting as a passing
+test: the prompt is doing the work, and the backstop's behaviour against a
+model that *does* return unsafe actions remains unverified. It is instrumented
+now, so if it ever fires in production the logs will show it.
+
+### The flood score moved 50 points at the same address
+
+Phase 2 measured flood 28 at "Rokeby Rd, Subiaco". Phase 3 measured **78** for
+the same query — dominant risk flipping from heat to flood, and a completely
+different plan.
+
+Not a bug. Nominatim resolved the query to -31.9460 rather than -31.9511: a
+different point on the same street, 570 m north, where the ground sits 12.5 m
+*below* its surroundings instead of 7.5 m above. The terrain term saturates and
+the score is legitimately high there. The maths did exactly what it says.
+
+The real problem is the product's own copy. The address field said "Street and
+suburb is enough", which is false for flood in a way that matters — a
+street-only query lands on an arbitrary point, and this app claims to be about
+*your exact spot*. The hint now asks for a street number and says why.
+
+This is the most useful thing the whole phase turned up, and it argues the
+"indicative" label on flood is doing real work rather than covering us.

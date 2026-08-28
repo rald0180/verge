@@ -1,10 +1,13 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ListChecks } from 'lucide-react'
+import { Download, ListChecks } from 'lucide-react'
 
 import { ActionCard } from './ActionCard'
+import { Button } from '../ui/Button'
 import { Card } from '../ui/Card'
 import { ErrorState } from '../ui/ErrorState'
 import { Skeleton } from '../ui/Skeleton'
+import { apiError } from '../../lib/types'
 import type { AdaptationPlan, ApiError } from '../../lib/types'
 
 interface PlanListProps {
@@ -17,7 +20,54 @@ interface PlanListProps {
 /** Cards stagger in at 40 ms intervals — CLAUDE.md section 4. */
 const STAGGER_SECONDS = 0.04
 
+/**
+ * Build the PDF in the browser and hand it to the user as a download.
+ *
+ * Both @react-pdf/renderer and PlanPdf are imported lazily inside the click
+ * handler. The library is by far the heaviest dependency in the project and
+ * almost nobody who loads the page will click this, so it has no business in
+ * the bundle everyone downloads.
+ */
+async function downloadPlanPdf(plan: AdaptationPlan): Promise<void> {
+  // BOTH imports must be dynamic. PlanPdf imports @react-pdf/renderer at module
+  // scope, so a static `import { PlanPdf }` here would drag the whole library
+  // into the main bundle no matter how lazily this function loads it — which is
+  // exactly what happened the first time, tripling the bundle.
+  const [{ pdf }, { PlanPdf }] = await Promise.all([
+    import('@react-pdf/renderer'),
+    import('./PlanPdf'),
+  ])
+  const blob = await pdf(<PlanPdf plan={plan} />).toBlob()
+  const url = URL.createObjectURL(blob)
+
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `verge-plan-${plan.placeName.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.pdf`
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+
+  // Revoking immediately can cancel the download in some browsers.
+  window.setTimeout(() => URL.revokeObjectURL(url), 10_000)
+}
+
 export function PlanList({ plan, loading = false, error, onRetry }: PlanListProps) {
+  const [exporting, setExporting] = useState(false)
+  const [exportError, setExportError] = useState<ApiError | undefined>(undefined)
+
+  async function handleExport() {
+    if (!plan) return
+    setExporting(true)
+    setExportError(undefined)
+    try {
+      await downloadPlanPdf(plan)
+    } catch {
+      setExportError(apiError('bad-response', 'The PDF could not be generated in this browser.'))
+    } finally {
+      setExporting(false)
+    }
+  }
+
   if (error) {
     return (
       <ErrorState
@@ -31,6 +81,11 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
   if (loading) {
     return (
       <div className="space-y-4">
+        <p className="text-sm text-zinc-400">
+          Reading your risk profile and working out what is worth doing. This takes
+          about half a minute — it is thinking about your specific scores, not
+          looking up a checklist.
+        </p>
         {[0, 1, 2].map((index) => (
           <Card key={index}>
             <div className="space-y-4">
@@ -52,8 +107,8 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
             <ListChecks className="h-5 w-5 text-accent" aria-hidden="true" />
           </span>
           <p className="max-w-md text-sm text-zinc-400">
-            Answer the three questions above and Verge will rank what is actually worth
-            doing at this address, cheapest real impact first.
+            Answer the three questions above and Verge will rank what is actually worth doing
+            at this address, cheapest real impact first.
           </p>
         </div>
       </Card>
@@ -62,7 +117,15 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-zinc-400">{plan.summary}</p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <p className="max-w-2xl text-sm text-zinc-400">{plan.summary}</p>
+        <Button variant="ghost" size="sm" loading={exporting} onClick={() => void handleExport()}>
+          <Download className="h-4 w-4" aria-hidden="true" />
+          Save as PDF
+        </Button>
+      </div>
+
+      {exportError ? <ErrorState error={exportError} title="Export failed" /> : null}
 
       {plan.actions.map((action, index) => (
         <motion.div
@@ -74,6 +137,14 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
           <ActionCard action={action} />
         </motion.div>
       ))}
+
+      <p className="text-xs text-zinc-500">
+        Costs are estimates in Australian dollars, not quotes. Actions are ranked by impact per
+        dollar.{' '}
+        {plan.dwelling.tenure === 'rent'
+          ? 'Only actions a tenant can take without the owner’s permission are shown.'
+          : 'Some actions alter the building and may need approval.'}
+      </p>
     </div>
   )
 }

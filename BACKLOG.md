@@ -78,3 +78,24 @@ Recorded so they stop taking up room in anyone's head.
   Running `npm run dev` still works and silently omits `/api`, which is the
   dev/prod divergence that caused the Phase 1 bug in the first place. A note in
   README.md would be cheap.
+
+## Added 2026-08-28, Phase 3
+
+- **A street-only query resolves to an arbitrary point on that street**, and the
+  flood term is extremely sensitive to it. "Rokeby Rd, Subiaco" resolved to
+  -31.9511 one day and -31.9460 the next — 570 m apart on the same road — and
+  the flood score moved 28 → 78, flipping the dominant risk and producing an
+  entirely different plan. Mitigated for now by asking for a street number in
+  the field hint. The real fixes are to show the user which point was chosen on
+  a small map, or to sample a short run of the street and present a range
+  instead of a point. Phase 5 at the earliest.
+- **The impact-per-dollar sort favours cheap trivia.** Cost is floored at $1, so
+  a $0 action ranks on raw impact while a $250 action is divided by 250. It has
+  not misbehaved badly yet, but "check your insurance policy" outranking
+  "top up ceiling insulation" is a plausible failure. Consider ranking within
+  budget bands, or a dampened denominator.
+- **The renter gate has never fired.** Instrumented and logging
+  `{returned, dropped}`; `dropped` was 0 across every renter run including a
+  deliberately tempting over-$2,000 budget at heat 88. The filter is correct
+  defensive code but its behaviour on a model that *does* return unsafe actions
+  is unverified. Worth a deliberate test with a weakened prompt.

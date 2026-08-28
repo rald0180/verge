@@ -36,12 +36,14 @@ export function AddressSearch({ onSearch, loading = false, error }: AddressSearc
         type="search"
         value={query}
         onChange={setQuery}
-        placeholder="Street and suburb"
+        placeholder="Street address and suburb"
         autoComplete="street-address"
         disabled={loading}
         {...(error === undefined ? {} : { error })}
         {...(error === undefined
-          ? { hint: 'Street and suburb is enough. Nothing you type is stored.' }
+          ? {
+              hint: 'Include a street number if you can — flood risk changes sharply along a single street. Nothing you type is stored.',
+            }
           : {})}
         trailing={
           <Button type="submit" size="sm" loading={loading} disabled={trimmed.length < 3}>

@@ -17,18 +17,9 @@ import { Skeleton } from './components/ui/Skeleton'
 import { SurfaceOverlay } from './components/audit/SurfaceOverlay'
 import { TrendChart } from './components/lens/TrendChart'
 import { useRiskProfile } from './hooks/useRiskProfile'
+import { usePlan } from './hooks/usePlan'
 import { useStreetAudit } from './hooks/useStreetAudit'
 import type { GeocodeResult, RiskProfile } from './lib/types'
-
-/**
- * Phase 3 flips this on and wires DwellingForm to /api/plan.
- *
- * It is a constant rather than `profile !== undefined` on purpose: a risk
- * profile now genuinely reaches `ready`, so gating on that would open the form
- * onto a submit button that does nothing. An honestly disabled control beats a
- * live one that silently no-ops.
- */
-const PLANNER_ENABLED = false
 
 interface PlaceCardProps {
   readonly place: GeocodeResult
@@ -79,6 +70,7 @@ function PlaceCard({ place, profile }: PlaceCardProps) {
 
 export default function App() {
   const lens = useRiskProfile()
+  const planner = usePlan()
   const audit = useStreetAudit()
 
   const lensState = lens.state
@@ -124,7 +116,11 @@ export default function App() {
 
         <Card>
           <AddressSearch
-            onSearch={(query) => void lens.load(query)}
+            onSearch={(query) => {
+              // A plan is about one risk profile. A new address invalidates it.
+              planner.reset()
+              void lens.load(query)
+            }}
             loading={busy}
             {...(lensError ? { error: lensError.message } : {})}
           />
@@ -162,14 +158,27 @@ export default function App() {
           description="Three questions about your place, then a ranked list of what is worth doing, cheapest real impact first. Renters only ever get actions they are allowed to take."
         />
 
-        <p className="text-sm text-zinc-500">
-          {profile
-            ? 'Your risk profile is ready. The planner that turns it into costed actions is the next thing being built.'
-            : 'Check an address above first — the plan is built from your own risk profile, not from a generic checklist.'}
-        </p>
+        {profile ? null : (
+          <p className="text-sm text-zinc-500">
+            Check an address above first — the plan is built from your own risk profile, not
+            from a generic checklist.
+          </p>
+        )}
 
-        <DwellingForm disabled={!PLANNER_ENABLED} onSubmit={() => undefined} />
-        <PlanList />
+        <DwellingForm
+          disabled={!profile}
+          loading={planner.state.status === 'loading'}
+          onSubmit={(dwelling) => {
+            if (profile) void planner.build(profile, dwelling)
+          }}
+        />
+
+        <PlanList
+          loading={planner.state.status === 'loading'}
+          {...(planner.state.status === 'ready' ? { plan: planner.state.plan } : {})}
+          {...(planner.state.status === 'error' ? { error: planner.state.error } : {})}
+          onRetry={() => void planner.retry()}
+        />
       </section>
 
       {/* Feature 3 — Street Audit */}
