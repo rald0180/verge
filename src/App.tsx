@@ -1,0 +1,217 @@
+import { MapPin } from 'lucide-react'
+
+import { AddressSearch } from './components/lens/AddressSearch'
+import { AppShell } from './components/layout/AppShell'
+import { Badge } from './components/ui/Badge'
+import { Card } from './components/ui/Card'
+import { CoolingScore } from './components/audit/CoolingScore'
+import { DIMENSION_META } from './lib/format'
+import { DwellingForm } from './components/planner/DwellingForm'
+import { ErrorState } from './components/ui/ErrorState'
+import { Interventions } from './components/audit/Interventions'
+import { PhotoDrop } from './components/audit/PhotoDrop'
+import { PlanList } from './components/planner/PlanList'
+import { RiskGrid } from './components/lens/RiskGrid'
+import { SectionHeading } from './components/layout/SectionHeading'
+import { Skeleton } from './components/ui/Skeleton'
+import { SurfaceOverlay } from './components/audit/SurfaceOverlay'
+import { TrendChart } from './components/lens/TrendChart'
+import { useRiskProfile } from './hooks/useRiskProfile'
+import { useStreetAudit } from './hooks/useStreetAudit'
+import type { GeocodeResult, RiskProfile } from './lib/types'
+
+/**
+ * Phase 3 flips this on and wires DwellingForm to /api/plan.
+ *
+ * It is a constant rather than `profile !== undefined` on purpose: a risk
+ * profile now genuinely reaches `ready`, so gating on that would open the form
+ * onto a submit button that does nothing. An honestly disabled control beats a
+ * live one that silently no-ops.
+ */
+const PLANNER_ENABLED = false
+
+interface PlaceCardProps {
+  readonly place: GeocodeResult
+  readonly profile?: RiskProfile
+}
+
+/**
+ * The resolved address, and once the data lands, the headline verdict.
+ *
+ * Section 4 of CLAUDE.md: no bare numbers. The composite score always arrives
+ * with the sentence that explains what it means and which dimension drove it.
+ */
+function PlaceCard({ place, profile }: PlaceCardProps) {
+  return (
+    <Card>
+      <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+        <div className="flex min-w-0 items-start gap-4">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-quiet">
+            <MapPin className="h-4 w-4 text-accent" aria-hidden="true" />
+          </span>
+          <div className="min-w-0 space-y-1">
+            <p className="text-sm font-medium text-zinc-100">{place.shortName}</p>
+            <p className="text-sm text-zinc-400">{place.displayName}</p>
+            <p className="text-xs text-zinc-500">
+              {place.coordinates.latitude.toFixed(4)},{' '}
+              {place.coordinates.longitude.toFixed(4)}
+            </p>
+          </div>
+        </div>
+
+        {profile ? (
+          <div className="shrink-0 space-y-2 md:text-right">
+            <p className="text-xs uppercase tracking-widest text-zinc-500">
+              Overall risk
+            </p>
+            <Badge score={profile.composite} />
+            <p className="max-w-xs text-sm text-zinc-400">
+              Scored {profile.composite} of 100 across four dimensions, weighted
+              equally. The biggest driver here is{' '}
+              {DIMENSION_META[profile.dominant].label.toLowerCase()}.
+            </p>
+          </div>
+        ) : null}
+      </div>
+    </Card>
+  )
+}
+
+export default function App() {
+  const lens = useRiskProfile()
+  const audit = useStreetAudit()
+
+  const lensState = lens.state
+  const busy = lensState.status === 'locating' || lensState.status === 'loading'
+  const lensError = lensState.status === 'error' ? lensState.error : undefined
+  const profile = lensState.status === 'ready' ? lensState.profile : undefined
+
+  const place =
+    lensState.status === 'loading'
+      ? lensState.place
+      : lensState.status === 'ready'
+        ? lensState.profile.place
+        : undefined
+
+  return (
+    <AppShell>
+      {/* Hero */}
+      <section className="space-y-4 pt-4 md:pt-8">
+        <p className="text-xs uppercase tracking-widest text-zinc-500">
+          NextStep Hacks 2026 · Earth Forward
+        </p>
+        <h1 className="text-3xl font-semibold tracking-tight text-zinc-100 md:text-5xl">
+          Climate adaptation that starts at your front door
+        </h1>
+        <p className="max-w-2xl text-sm text-zinc-400">
+          Type in an address and Verge builds a hyperlocal climate risk profile for that
+          exact spot out of real observations and downscaled projections, then turns it
+          into a ranked, costed plan of things you can actually do this month.
+        </p>
+        <p className="max-w-2xl text-sm text-accent-text">
+          Climate reports tell you the planet is in trouble. Verge tells you what to do
+          about your house.
+        </p>
+      </section>
+
+      {/* Feature 1 — Risk Lens */}
+      <section className="space-y-8 pt-4">
+        <SectionHeading
+          eyebrow="Step one"
+          title="Risk Lens"
+          description="Four dimensions, scored 0 to 100 for your coordinate: heat, flood, air, and drought and fire weather."
+        />
+
+        <Card>
+          <AddressSearch
+            onSearch={(query) => void lens.load(query)}
+            loading={busy}
+            {...(lensError ? { error: lensError.message } : {})}
+          />
+        </Card>
+
+        {place ? <PlaceCard place={place} {...(profile ? { profile } : {})} /> : null}
+
+        <RiskGrid
+          loading={busy}
+          {...(profile ? { scores: profile.scores } : {})}
+          {...(lensError ? { error: lensError } : {})}
+          onRetry={() => void lens.retry()}
+        />
+
+        {/*
+          The chart always shows heat, even when another dimension dominates.
+          Heat is the only one of the four with a real observed-versus-projected
+          series behind it — there is no keyless 2050 projection for air quality
+          or local flooding, and drawing one would be a fabricated trend.
+        */}
+        {lensError ? null : (
+          <TrendChart
+            loading={busy}
+            {...(profile ? { projection: profile.projection } : {})}
+            {...(profile ? { band: profile.scores.heat.band } : {})}
+          />
+        )}
+      </section>
+
+      {/* Feature 2 — Adaptation Planner */}
+      <section className="space-y-8 pt-4">
+        <SectionHeading
+          eyebrow="Step two"
+          title="Adaptation Planner"
+          description="Three questions about your place, then a ranked list of what is worth doing, cheapest real impact first. Renters only ever get actions they are allowed to take."
+        />
+
+        <p className="text-sm text-zinc-500">
+          {profile
+            ? 'Your risk profile is ready. The planner that turns it into costed actions is the next thing being built.'
+            : 'Check an address above first — the plan is built from your own risk profile, not from a generic checklist.'}
+        </p>
+
+        <DwellingForm disabled={!PLANNER_ENABLED} onSubmit={() => undefined} />
+        <PlanList />
+      </section>
+
+      {/* Feature 3 — Street Audit */}
+      <section className="space-y-8 pt-4">
+        <SectionHeading
+          eyebrow="Step three"
+          title="Street Audit"
+          description="Drop in a photo of your street and Verge reads the surfaces in it, scores how well the spot handles heat, and names three things that would cool it down."
+        />
+
+        {audit.state.status === 'idle' ? (
+          <PhotoDrop onSelect={(file, previewUrl) => void audit.analyse(file, previewUrl)} />
+        ) : null}
+
+        {audit.state.status === 'analysing' ? (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        ) : null}
+
+        {audit.state.status === 'error' ? (
+          <ErrorState
+            error={audit.state.error}
+            onRetry={audit.reset}
+            title="Could not audit that photo"
+          />
+        ) : null}
+
+        {audit.state.status === 'ready' ? (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <SurfaceOverlay
+              previewUrl={audit.state.previewUrl}
+              surfaces={audit.state.audit.surfaces}
+            />
+            <div className="space-y-4">
+              <CoolingScore audit={audit.state.audit} />
+              <Interventions interventions={audit.state.audit.interventions} />
+            </div>
+          </div>
+        ) : null}
+      </section>
+    </AppShell>
+  )
+}
