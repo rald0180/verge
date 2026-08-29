@@ -11,7 +11,11 @@
  * Nothing in this file is a number we made up and then dressed as science.
  *
  * Published sources used below:
- *   - European Air Quality Index (EEA) band structure, 0-100+.
+ *   - European Air Quality Index (EEA) band structure, 0-100+. NOTE: the values
+ *     it is applied to come from the CAMS atmospheric model via Open-Meteo
+ *     (11 km over Europe, 45 km elsewhere), not from ground stations. It is a
+ *     modelled concentration for a grid cell, and the UI says so — an earlier
+ *     version labelled this dial "Measured", which was wrong.
  *   - WHO 2021 global air quality guidelines, 24-hour means:
  *     PM2.5 15 ug/m3, PM10 45 ug/m3.
  *   - Chandler Burning Index (Chandler et al., 1983), a temperature and
@@ -25,7 +29,7 @@ import type {
   RiskBand,
   RiskDimension,
   RiskScore,
-} from './types'
+} from './types.js'
 
 /* -------------------------------------------------------------------------- */
 /* Primitives                                                                 */
@@ -241,7 +245,7 @@ export function airScore(inputs: AirInputs): RiskScore {
       label: 'PM2.5',
       value: Math.round(pm25 * 10) / 10,
       unit: 'µg/m³',
-      source: 'Open-Meteo air quality, current hour (WHO 24-h guideline: 15)',
+      source: 'CAMS model via Open-Meteo, current hour (WHO 24-h guideline: 15)',
     })
   }
   if (pm10 !== null) {
@@ -249,7 +253,7 @@ export function airScore(inputs: AirInputs): RiskScore {
       label: 'PM10',
       value: Math.round(pm10 * 10) / 10,
       unit: 'µg/m³',
-      source: 'Open-Meteo air quality, current hour (WHO 24-h guideline: 45)',
+      source: 'CAMS model via Open-Meteo, current hour (WHO 24-h guideline: 45)',
     })
   }
   if (ozone !== null) {
@@ -257,7 +261,7 @@ export function airScore(inputs: AirInputs): RiskScore {
       label: 'Ozone',
       value: Math.round(ozone),
       unit: 'µg/m³',
-      source: 'Open-Meteo air quality, current hour',
+      source: 'CAMS model via Open-Meteo, current hour',
     })
   }
 
@@ -266,14 +270,14 @@ export function airScore(inputs: AirInputs): RiskScore {
       label: 'European AQI',
       value: Math.round(europeanAqi),
       unit: 'index',
-      source: 'Open-Meteo air quality, European AQI',
+      source: 'CAMS model via Open-Meteo — 45 km grid cell, not a local sensor',
     })
     const raw = clamp(europeanAqi, 0, 100)
     return makeScore(
       'air',
       raw,
-      'observed',
-      `The air here rates ${Math.round(europeanAqi)} on the European Air Quality Index right now, where anything under 20 is good and over 80 is very poor.`,
+      'modelled',
+      `Air across this area rates ${Math.round(europeanAqi)} on the European Air Quality Index right now, where anything under 20 is good and over 80 is very poor. This is a modelled grid cell, not a sensor on your street.`,
       evidence,
     )
   }
@@ -283,8 +287,8 @@ export function airScore(inputs: AirInputs): RiskScore {
     return makeScore(
       'air',
       raw,
-      'observed',
-      `Fine particles are at about ${Math.round(pm25)} µg/m³ right now. The World Health Organization's 24-hour guideline is 15 µg/m³.`,
+      'modelled',
+      `Fine particles are modelled at about ${Math.round(pm25)} µg/m³ across this area right now. The World Health Organization's 24-hour guideline is 15 µg/m³.`,
       evidence,
     )
   }
@@ -318,6 +322,13 @@ export interface DryFireInputs {
  *
  * Its own published bands: below 50 low, 50-75 moderate, 75-90 high, 90-97.5
  * very high, above 97.5 extreme.
+ *
+ * ONE HONEST CAVEAT. The index is defined over *monthly mean afternoon*
+ * temperature and humidity. We feed it the current hour, which is what live
+ * weather stations publishing a CBI generally do, but it is not what the
+ * original definition specifies — so the band edges above should be read as
+ * approximate here rather than as the published thresholds applied exactly.
+ * Verified against the source definition on 28 Aug 2026.
  */
 export function chandlerBurningIndex(
   temperatureC: number,

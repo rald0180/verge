@@ -75,10 +75,39 @@ Published references used in the scoring maths, all named in
 [`src/lib/scoring.ts`](src/lib/scoring.ts) next to the code that uses them:
 
 - European Air Quality Index band structure (European Environment Agency).
+  Applied to CAMS model output via Open-Meteo — an 11 km grid over Europe and
+  45 km elsewhere, so this is a modelled concentration for a grid cell, not a
+  sensor reading. The UI labels it modelled for that reason.
 - WHO 2021 global air quality guidelines, 24-hour means: PM2.5 15 µg/m³,
   PM10 45 µg/m³.
 - Chandler Burning Index (Chandler et al., 1983), a temperature and
-  relative-humidity fire-weather index.
+  relative-humidity fire-weather index. Note it is defined over *monthly mean
+  afternoon* values and we feed it the current hour, as live weather stations
+  generally do; its band edges are therefore approximate here.
+
+### Urban heat island cooling ranges
+
+Every temperature the Street Audit prints comes from this list, attached
+server-side in [`api/audit.ts`](api/audit.ts). Ranges are conservative: where
+sources disagree, the low end is taken from the more pessimistic study rather
+than the headline figure.
+
+| Intervention | Range | Measures | Source |
+|---|---|---|---|
+| Plant shade trees | 0.3 – 1.5 °C | air temperature | [npj Urban Sustainability (2025)](https://www.nature.com/articles/s42949-025-00277-x) — 0.8 °C for a 10% canopy increase, 1.5 °C for 30%; and the global meta-analysis of ~0.3 °C per 10% summarised by [WRI](https://www.wri.org/insights/urban-trees-cooling-potential) |
+| Lighten the roof | 1.2 – 3.3 °C | indoor peak temperature | [US EPA, Using Cool Roofs to Reduce Heat Islands](https://www.epa.gov/heatislands/using-cool-roofs-reduce-heat-islands) — maximum indoor temperature in non-air-conditioned homes |
+| Planting on the roof | 0.6 – 3.0 °C | roof surface temperature | [Environmental Research Letters 11:064004 (2016)](https://iopscience.iop.org/article/10.1088/1748-9326/11/6/064004) — under 1 °C at 25% coverage, up to 3 °C at 100%; near-surface air fell only ~0.6 °C |
+| Lighten or shade paving | 0.5 – 4.0 °C | air temperature | [Cool Pavements for the Mitigation of Urban Heat Island: A Global Perspective (IntechOpen, 2025)](https://www.intechopen.com/online-first/1217999) — averaging ~1 °C; the top of the range generally requires active watering |
+| Swap hard surface for planting | 1.1 – 1.3 °C | air temperature | Field measurements over grass coverage report mean air temperature reductions of 1.18–1.26 °C against comparable hard surfaces |
+| Shade walls and windows | 0.5 – 1.9 °C | air temperature | Greenery beside buildings and pavements is reported to reduce ambient air temperature by up to 1.87 °C |
+
+**Two separate uncertainties stack here, and the UI says so.** These ranges were
+measured in other cities under other conditions and are properties of the
+*intervention type*, not predictions for your address. They are applied to a
+vision model's estimate of what is in one photograph, which is itself an
+estimate. A cool roof lowering roof surface temperature by ~30 °C, indoor peak
+by 1–3 °C, and street air by close to nothing are all true at once; the column
+above says which one each figure is.
 
 ## What we will not fake
 
@@ -104,10 +133,14 @@ This section is the point, not boilerplate.
   Open-Meteo climate API has been confirmed against its documentation.
 - **Costs are estimates in AUD**, labelled as estimates everywhere they appear.
   They are not quotes.
-- **Cooling effect ranges will be cited here** from published urban heat island
-  literature before any cooling figure ships in the UI (Phase 4). They are
-  applied to a vision model's estimate of surface composition, and both sources
-  of uncertainty are stated on screen.
+- **Cooling effect ranges are published figures, not model output.** The Street
+  Audit's vision model estimates surface composition and chooses which
+  interventions apply; it never produces a temperature. Its response schema has
+  no field for one. The °C ranges are attached server-side from the cited
+  library below, and every figure is displayed with **what it measures** — air,
+  surface, or indoor peak temperature — because those differ by an order of
+  magnitude and quoting the largest without saying which would be the most
+  misleading number this project could print.
 - **This project was built with heavy AI assistance.** The commit history says
   so and so do we. It seemed better to own it than to be caught at it.
 

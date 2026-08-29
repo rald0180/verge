@@ -566,3 +566,103 @@ street-only query lands on an arbitrary point, and this app claims to be about
 
 This is the most useful thing the whole phase turned up, and it argues the
 "indicative" label on flood is doing real work rather than covering us.
+
+---
+
+## 2026-08-29 — Phase 4, Street Audit
+
+Section 7 sets the constraint that determined the whole design: cooling
+estimates must be *published ranges cited in README.md*, applied to an AI
+estimate of surface composition. So this phase began with research, not code.
+
+### The model cannot state a temperature, by construction
+
+The vision model estimates surface composition and chooses **which** of six
+interventions apply. It never supplies a °C figure — and this is not enforced
+by asking it nicely in the prompt. **The response schema has no field for a
+temperature at all.** The model returns an id from a fixed enum plus a
+one-sentence rationale; the server looks up the published range from
+`COOLING_LIBRARY` and attaches it.
+
+A number a model cannot express is a number it cannot invent. This is the same
+shape as the Phase 3 renter gate but strictly stronger: the renter filter
+removes bad output after the fact, whereas here the bad output is
+unrepresentable.
+
+### What each figure measures is now part of the type
+
+`Intervention` gained a `measures` field — `air temperature`, `surface
+temperature`, or `indoor peak temperature` — plus a `scaleNote`.
+
+This is the honesty crux of the feature. A cool roof lowers roof *surface*
+temperature by around 30 °C, indoor *peak* temperature by 1–3 °C, and
+neighbourhood *air* temperature by close to nothing. All three are true. Quoting
+the largest without saying which one it is would be the most misleading number
+this project could print, and it would have been the easy thing to do.
+
+Making it a required field rather than prose in the citation means the UI
+cannot render a figure without rendering what it measures.
+
+### I nearly shipped two fabricated citations
+
+Writing the library, I attributed the canopy figure to "Wang et al." and the
+green roof figure to "Sharma et al.". **I had verified neither.** The searches
+returned titles, journals and DOIs — never authorship. I had invented two
+plausible-looking author names, which is precisely the failure CLAUDE.md
+section 5 exists to prevent, in the one feature most explicitly about not
+doing that.
+
+Caught while writing the README, because putting a citation in front of a
+reader forces you to check it in a way that writing a code comment does not.
+Both now cite title and venue only. There are no author names anywhere in the
+codebase except the Chandler index — which I then went and verified rather than
+assuming, since I had just demonstrated my own unreliability on exactly this.
+
+### That verification found a real methodology mismatch
+
+The Chandler Burning Index is defined over **monthly mean afternoon**
+temperature and humidity. We feed it the current hour. Live weather stations
+publishing a CBI generally do the same, so it is defensible practice, but it is
+not what the published definition specifies — which means the band edges (50 /
+75 / 90 / 97.5) are approximate in our usage rather than exact. Now documented
+in `scoring.ts` beside the formula.
+
+### Also corrected: air quality was labelled "Measured"
+
+Prompted by a direct question about whether Verge's data is real. It was not a
+measurement. Open-Meteo's air quality is CAMS *model* output at 11 km over
+Europe and 45 km elsewhere — for Perth, a single grid cell covering most of the
+metropolitan area. The dial said "Measured".
+
+Now labelled modelled, attributed to CAMS rather than the reseller, with the
+resolution stated in the evidence line. After this change **no dial in the app
+claims to be a direct measurement**, which is accurate: every input is model
+output or reanalysis.
+
+### Verified
+
+- Synthetic test scene (a hand-built PNG of asphalt, grass, one tree canopy and
+  a roofline): 200 in 10.4s. Read back dark asphalt 37%, lawn 31%, canopy 14%,
+  dark roof 8%, sky 10% — close to what was drawn. Cooling score 45, band
+  `elevated`, which is the correct inversion of 100 − 45.
+- The `sceneIsOutdoor` guard: a document-like image returns a typed 422 in 3.6s
+  telling the user to try a photo of their street, rather than scoring a page.
+- Browser drag-and-drop end to end: image renders, five surface rows, all three
+  interventions with range, measures, scale and full citation.
+- 390 px: no overflow, no clipping.
+
+### Not verified
+
+**Quality against a real photograph.** Everything above used a synthetic image
+of flat colour blocks. That proves the pipeline, not the perception. Surface
+percentages, canopy estimates and intervention choice on a real street photo
+with texture, shadow and mixed materials are untested.
+
+### One shared-code fix
+
+`api/audit.ts` needed `bandFor` from `scoring.ts`, which meant adding it to the
+api TypeScript project and giving its import an explicit `.js` extension —
+the same NodeNext requirement that broke the Phase 1 deployment. Caught locally
+this time by `tsc -b`, because the build command was pinned in Phase 2 to run
+it. The band scale now has one definition shared by client and server rather
+than a duplicated copy.

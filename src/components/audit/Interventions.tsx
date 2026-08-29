@@ -6,13 +6,16 @@ interface InterventionsProps {
 }
 
 /**
- * The three things worth doing to this street.
+ * The three things worth doing to this spot.
  *
- * Each cooling figure is a published range with its source printed next to it.
- * CLAUDE.md section 7: the range comes from urban heat island literature cited
- * in README.md, the surface composition it is applied to comes from a model,
- * and both of those uncertainties are stated rather than averaged away into a
- * single confident-looking number.
+ * Every degree figure here is a published range from the literature cited
+ * beneath it, selected server-side — the model chooses which intervention
+ * applies, never what it is worth. See api/audit.ts.
+ *
+ * `measures` is rendered next to the number rather than buried in the citation
+ * because it is the difference between a true statement and a misleading one:
+ * a cool roof is worth ~30 °C of roof surface, 1-3 °C indoors, and almost
+ * nothing to the street's air. A bare "−3 °C" would be indefensible.
  */
 export function Interventions({ interventions }: InterventionsProps) {
   return (
@@ -20,14 +23,23 @@ export function Interventions({ interventions }: InterventionsProps) {
       {interventions.map((intervention) => (
         <Card key={intervention.title}>
           <div className="space-y-3">
-            <div className="flex items-start justify-between gap-4">
-              <h3 className="text-sm font-medium text-zinc-100">{intervention.title}</h3>
-              <span className="shrink-0 rounded-full bg-accent-quiet px-4 py-1 text-xs uppercase tracking-widest text-accent-text">
+            <h3 className="text-sm font-medium text-zinc-100">{intervention.title}</h3>
+
+            <p className="text-sm text-zinc-400">{intervention.description}</p>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-accent-quiet px-4 py-1 text-xs uppercase tracking-widest text-accent-text">
                 −{intervention.coolingEffectC.low} to −{intervention.coolingEffectC.high} °C
+              </span>
+              <span className="text-xs uppercase tracking-widest text-zinc-500">
+                {intervention.measures}
               </span>
             </div>
 
-            <p className="text-sm text-zinc-400">{intervention.description}</p>
+            <p className="text-xs text-zinc-500">
+              Published range at {intervention.scaleNote}.
+            </p>
+
             <p className="text-xs text-zinc-500">{intervention.sourceNote}</p>
           </div>
         </Card>

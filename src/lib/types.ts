@@ -250,8 +250,20 @@ export interface SurfaceFinding {
 export interface Intervention {
   readonly title: string
   readonly description: string
-  /** Local air-temperature reduction in °C, as a published range. */
+  /** The published range in °C. Never produced by the model — see api/audit.ts. */
   readonly coolingEffectC: { readonly low: number; readonly high: number }
+  /**
+   * WHAT the range measures. Structural rather than prose because the
+   * distinction is the whole honesty argument: a cool roof drops roof *surface*
+   * temperature by ~30 °C, indoor peak temperature by 1-3 °C, and neighbourhood
+   * *air* temperature by almost nothing. Quoting the biggest of those three
+   * without saying which one it is would be the single most misleading number
+   * this project could print.
+   */
+  readonly measures: 'air temperature' | 'surface temperature' | 'indoor peak temperature'
+  /** The study scale the figure came from, e.g. "neighbourhood scale". */
+  readonly scaleNote: string
+  /** Full citation, rendered under the figure. */
   readonly sourceNote: string
 }
 
