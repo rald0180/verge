@@ -150,13 +150,6 @@ export default function App() {
           title="Adaptation Planner"
         />
 
-        {profile ? null : (
-          <p className="text-sm text-zinc-500">
-            Check an address above first — the plan is built from your own risk profile, not
-            from a generic checklist.
-          </p>
-        )}
-
         <DwellingForm
           disabled={!profile}
           loading={planner.state.status === 'loading'}

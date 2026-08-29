@@ -62,10 +62,6 @@ export function SurfaceOverlay({ previewUrl, surfaces }: SurfaceOverlayProps) {
           ))}
         </ul>
 
-        <p className="text-xs text-zinc-500">
-          Coverage figures are a vision model’s estimate from a single photograph, not a
-          survey measurement.
-        </p>
       </div>
     </Card>
   )
