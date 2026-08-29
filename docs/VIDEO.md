@@ -158,6 +158,28 @@ Verge tells you what to do about your house."*
 
 ---
 
+## Voiceover
+
+Generated with Higgsfield Seed Audio and committed to `docs/voiceover/`. These
+cost credits to produce, so they are tracked rather than gitignored.
+
+| File | Beat | Length |
+|---|---|---|
+| `01-hook-reid.wav` | Cold open | 15.7s |
+| `02-risk-lens-reid.wav` | Risk Lens | 27.3s |
+| `03-planner-reid.wav` | Adaptation Planner | 15.0s |
+| `04-audit-reid.wav` | Street Audit | 19.4s |
+| `05-close-reid.wav` | Close | 9.0s |
+| `01-hook-GRADY.wav` | Cold open, alternate voice | 14.7s |
+
+Total narration 1:26. The video must run **3 to 5 minutes**, so the narration
+does not fill it and is not meant to — it tops and tails each section while the
+screen recordings play underneath. Leave the demo breathing between lines.
+
+Two voices are included for the same hook line so you can A/B them: **Reid**
+(used for the full set) and **Grady**. If you prefer Grady, the other four lines
+need regenerating in that voice, which needs more credits.
+
 ## Production notes
 
 What still needs a human:
