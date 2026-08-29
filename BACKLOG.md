@@ -22,8 +22,14 @@ These are not scope creep. They are known gaps with a home already.
 - **Wind in the fire-weather score.** Needs a drought factor with a real keyless
   source before the McArthur FFDI wind term can be used honestly. Phase 2 if a
   source turns up, otherwise it stays out and stays documented.
-- **Downscale photos client-side before upload** so the Street Audit stops
-  refusing files over 4 MB and instead resizes them. Phase 4.
+- ~~**Downscale photos client-side before upload** so the Street Audit stops
+  refusing files over 4 MB and instead resizes them.~~ **Done 2026-08-30.**
+  The browser now resizes to 1600 px on the long edge and re-encodes as JPEG
+  before upload — a 7.2 MB photo became 0.46 MB. Also fixed a real bug found
+  while measuring: Vercel rejects a request body over ~4.5 MB, which base64
+  reaches at about 3.4 MB of image, so files between 3.4 and 4 MB passed the
+  old client check and then died at the platform edge with an HTML 413 the
+  client could not parse.
 - **Unit tests for `scoring.ts`.** The file is written to be pure precisely so
   this is easy. Phase 5.
 - **Bundle size.** 681 kB raw / 202 kB gzipped, mostly `recharts` and

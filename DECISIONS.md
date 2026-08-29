@@ -658,6 +658,12 @@ of flat colour blocks. That proves the pipeline, not the perception. Surface
 percentages, canopy estimates and intervention choice on a real street photo
 with texture, shadow and mixed materials are untested.
 
+**RESOLVED 2026-08-30.** Run against a real inner-suburban street: asphalt
+32%, brick facade 25%, street trees 20%, concrete footpath 15%, shrubs 5%,
+grassy verge 3% — summing to 100, with 72% impervious and a cooling score of
+38. It also picked the three interventions that actually suit a sealed
+shopping street. Perception holds outside the test image.
+
 ### One shared-code fix
 
 `api/audit.ts` needed `bandFor` from `scoring.ts`, which meant adding it to the
@@ -786,3 +792,39 @@ colour, each with the window it was averaged over. Chart height went 64 to 80.
 labels rather than having the chart re-derive them. If the chart computed its
 own means it could silently disagree with the heat dial about what "today"
 means; passing them through makes that impossible.
+
+---
+
+## 2026-08-30 — The photo limit was hiding a platform bug
+
+Asked to raise the Street Audit's 4 MB cap, measured first rather than picking
+a bigger number, and found the cap was the smaller problem.
+
+Vercel rejects a serverless request body over roughly 4.5 MB. Base64 inflates
+an image by a third, so that ceiling arrives at about **3.4 MB of photo** —
+below the 4 MB the client was happily accepting. Probing production directly:
+3 MB of image reached the function, 4 MB and 5 MB both came back
+`413 FUNCTION_PAYLOAD_TOO_LARGE`.
+
+So files between roughly 3.4 and 4 MB passed our own check and then died at
+the platform edge, returning HTML that `response.json()` could not parse. The
+user saw "the audit service returned unreadable data" — true, unhelpful, and
+pointing at entirely the wrong thing.
+
+Raising the limit would have widened that window rather than closing it.
+
+**The fix is to resize, not to refuse.** The browser now downscales to 1600 px
+on the long edge and re-encodes as JPEG before upload. A 7.2 MB photo becomes
+0.46 MB — a 94% reduction — so the platform cap stops being reachable through
+normal use at all. EXIF orientation is applied during the resize, because
+phone photos are routinely stored sideways with a rotation flag and analysing
+a rotated street is analysing a different picture.
+
+The input gate is now a 30 MB sanity check rather than a hard 4 MB refusal,
+the server backstop moved from 5.5 MB to 4.2 MB of base64 so it sits *under*
+the platform cap and can answer in our own error shape, and a 413 that does
+get through is now reported as too-large rather than unreadable.
+
+**It also closed the oldest open question in the project.** The audit had only
+ever seen a synthetic image of flat colour blocks. Testing the resize with a
+real street photo finally answered whether the perception works, and it does.

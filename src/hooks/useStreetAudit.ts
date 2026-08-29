@@ -107,9 +107,15 @@ export function useStreetAudit(): UseStreetAudit {
     try {
       payload = await response.json()
     } catch {
+      // A 413 comes from the platform, not from our handler, so the body is
+      // HTML and this parse fails. Without the status check the user is told
+      // the data was unreadable, which is true and useless.
       setState({
         status: 'error',
-        error: apiError('bad-response', 'The audit service returned unreadable data.'),
+        error:
+          response.status === 413
+            ? apiError('too-large', 'That photo was too large to send. Try a smaller one.')
+            : apiError('bad-response', 'The audit service returned unreadable data.'),
       })
       return
     }

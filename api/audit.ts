@@ -44,10 +44,15 @@ const EFFORT = 'low' as const
 const MAX_TOKENS = 8_000
 
 /**
- * 5.5 MB of base64, roughly a 4 MB image. The client refuses anything over
- * 4 MB before encoding; this is the backstop for a caller that did not.
+ * Vercel rejects a request body over roughly 4.5 MB before this function runs,
+ * returning an HTML 413 the client cannot parse as an ApiResult. So this sits
+ * just underneath that, at 4.2 MB of base64 (about a 3.1 MB image), which is
+ * the largest payload we can still answer in our own error shape.
+ *
+ * The browser downscales before upload, so a caller reaching this at all has
+ * either bypassed the UI or hit a browser where canvas encoding failed.
  */
-const MAX_BASE64_BYTES = 5_500_000
+const MAX_BASE64_BYTES = 4_200_000
 const MEDIA_TYPES: readonly string[] = ['image/jpeg', 'image/png', 'image/webp']
 
 const SURFACE_KINDS: readonly SurfaceKind[] = [

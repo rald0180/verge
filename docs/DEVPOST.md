@@ -161,8 +161,11 @@ sentence in a prompt.
 
 ## What's next for Verge
 
-- **Test the Street Audit against real photographs.** It has been verified on a
-  synthetic test image, which proves the pipeline but not the perception.
+- **Widen the Street Audit's testing.** It now works on real street
+  photographs — on an inner-suburban street it read asphalt 32%, brick facade
+  25%, street trees 20%, footpath 15% and a grassy verge 3% — but that is one
+  street in one city. Suburban, rural and apartment-balcony scenes are all
+  untested.
 - **Show which point on the street was chosen**, on a small map, so the flood
   sensitivity is visible rather than surprising.
 - **Server-side rate limiting on the geocode proxy.** The edge cache keeps it
