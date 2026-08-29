@@ -7,16 +7,32 @@
 
 ## 0. Ground truth about the competition
 
-These facts were pulled from the live Devpost page on 28 Aug 2026. If any of them changed, stop and re-check before acting.
+Re-verified against the live Devpost page and its rules and dates pages on
+29 Aug 2026. If any of them changed, stop and re-check before acting.
 
 | Item | Value |
 |---|---|
 | Event | NextStep Hacks 2026 |
-| Theme (actual) | **"Earth Forward"** — environmental impact. It is NOT "AI & Social Good". |
+| Theme (actual) | **"Earth Forward"** — environmental impact, explicitly including **climate resilience**, renewable energy, conservation, sustainable agriculture, waste reduction. It is NOT "AI & Social Good". |
+| Hacking window | Opens 21 Aug 2026 12:00am EDT, closes 13 Sep 2026 5:00pm EDT |
 | Deadline | 13 Sep 2026, 5:00pm EDT (14 Sep 2026, 5:00am Perth time) |
-| Required deliverables | Pitch video (max 5 min), public repo link, live app link |
+| Judging | 14–17 Sep. Winners announced 18 Sep, 9:00am EDT |
+| Required deliverables | Video demo **3 to 5 minutes**, public repo link, live app link, completed Devpost project page |
 | Judging criteria | Originality, Adherence to Track, Completion, Learning, Design, Technology |
 | Weightings | Not published. Assume equal. |
+| Eligibility | Ages **13 to 24 as of 21 Aug 2026**. Students only; companies and professional organisations excluded. Groups up to 5. |
+| Disqualification | Plagiarised projects, or projects not completed within the time frame |
+| Continuing prior work | If continuing an old project you MUST state on Devpost what was built before the hackathon and what was built during it |
+
+**CORRECTION, 29 Aug 2026.** The video has a **minimum length of three minutes**,
+not merely a five-minute cap — the rules page says "a video (3-5 minutes)".
+An earlier reading of this file recorded only the maximum. A ninety-second
+demo would be non-compliant. Feature 3 is still the ninety-second *moment*
+within a three-to-five minute cut, not the whole video.
+
+**No AI policy is published.** The rules disqualify plagiarism and late work,
+and say nothing about AI-assisted development either way. Our position is
+unchanged and stated in README.md: we disclose it plainly rather than hide it.
 
 ### What the criteria actually mean for our build
 
@@ -256,7 +272,7 @@ Sixteen days to deadline. Front-load the risky parts.
 | 3. Planner | Days 7-9 | `/api/plan` returns validated JSON, cards render, PDF exports |
 | 4. Street Audit | Days 10-12 | `/api/audit` handles an image, score and interventions render |
 | 5. Polish | Days 13-14 | Motion, mobile pass, empty and error states, copy edit, README with screenshots |
-| 6. Submission | Days 15-16 | Video recorded and cut under 5 min, Devpost write-up, repo cleaned and public |
+| 6. Submission | Days 15-16 | Video recorded and cut to **between 3 and 5 minutes**, Devpost write-up, repo cleaned and public |
 
 Ship a deployed URL at the end of Phase 1 and keep it deployed. A project that has been live for two weeks looks completed. A project deployed an hour before the deadline looks like one.
 
