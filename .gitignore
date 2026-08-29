@@ -11,3 +11,7 @@ npm-debug.log*
 
 # Vercel appends a broad .env* rule above; the template must still be tracked.
 !.env.example
+
+# Pitch-video footage: large, and reproducible with scripts/record.mjs.
+# The script and docs/VIDEO.md are tracked; the .webm files are not.
+docs/footage/
