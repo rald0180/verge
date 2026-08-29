@@ -22,7 +22,7 @@ interface TrendRow {
   readonly projected: number | null
 }
 
-const OBSERVED_COLOUR = '#A1A1AA' // zinc-400. Measurement is deliberately neutral.
+const OBSERVED_COLOUR = '#A1A1AA' // zinc-400. The historical series is deliberately neutral.
 
 /**
  * Observed history against the modelled future, for the dominant risk.
@@ -105,7 +105,7 @@ export function TrendChart({
             {projection.label}
           </p>
           <p className="mt-2 text-sm text-zinc-400">
-            Measured history in grey, modelled projection in colour. {projection.scenario}
+            Historical reanalysis in grey, modelled projection in colour. {projection.scenario}
           </p>
         </div>
 
@@ -138,7 +138,7 @@ export function TrendChart({
               <Line
                 type="monotone"
                 dataKey="observed"
-                name="Measured"
+                name="Recorded"
                 stroke={OBSERVED_COLOUR}
                 strokeWidth={2}
                 dot={false}

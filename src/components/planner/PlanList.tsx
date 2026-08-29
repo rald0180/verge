@@ -108,7 +108,7 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
           </span>
           <p className="max-w-md text-sm text-zinc-400">
             Answer the three questions above and Verge will rank what is actually worth doing
-            at this address, cheapest real impact first.
+            at this address, most effective first.
           </p>
         </div>
       </Card>
@@ -139,8 +139,9 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
       ))}
 
       <p className="text-xs text-zinc-500">
-        Costs are estimates in Australian dollars, not quotes. Actions are ranked by impact per
-        dollar.{' '}
+        Costs are estimates in Australian dollars, not quotes. Impact scores are the model’s own
+        estimate, not a measurement. Actions are ranked by impact, with cheaper wins favoured
+        where impact is close.{' '}
         {plan.dwelling.tenure === 'rent'
           ? 'Only actions a tenant can take without the owner’s permission are shown.'
           : 'Some actions alter the building and may need approval.'}

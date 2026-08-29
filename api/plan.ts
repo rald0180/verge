@@ -241,14 +241,35 @@ function toAction(value: unknown, index: number): AdaptationAction | null {
 }
 
 /**
- * Impact per dollar, for ranking.
+ * Ranking weight. Impact, less a bounded penalty for cost.
  *
- * Free actions would divide by zero, so cost is floored at $1 — which also
- * means a free high-impact action sorts to the top, which is correct.
+ * This replaced a literal impact-per-dollar ratio, which was degenerate.
+ * Dividing by cost made cost the only variable that mattered: on a real plan
+ * a $0 admin task scoring 45 ranked 200x above ceiling insulation scoring 85,
+ * so the two most effective actions landed last. "Cheapest first" is not the
+ * same as "best value first".
+ *
+ * Two things ruled out along the way. Sorting by impact alone ignores cost
+ * entirely. A comparator that treats near-equal impacts as ties and then
+ * prefers the cheaper one is **non-transitive** — with impacts 88, 85 and 78
+ * and an 8-point tie window, 88 ties 85 and 85 ties 78 but 88 does not tie 78,
+ * which is undefined behaviour for Array.sort.
+ *
+ * So: a single scalar. `cost / (cost + K)` is always below 1, so the penalty
+ * can never exceed PENALTY_POINTS. Impact stays dominant, and a cheap action
+ * only overtakes a dearer one when their impacts are genuinely close.
+ *
+ * Note the model already filters to the household's budget band, so every
+ * action here is affordable. The question is what to do FIRST, not what to
+ * ration.
  */
-function impactPerDollar(action: AdaptationAction): number {
+const PENALTY_POINTS = 15
+const PENALTY_HALF_COST = 200
+
+function rankingWeight(action: AdaptationAction): number {
   const midpoint = (action.estimatedCostAud.low + action.estimatedCostAud.high) / 2
-  return action.impactScore / Math.max(1, midpoint)
+  const costPenalty = PENALTY_POINTS * (midpoint / (midpoint + PENALTY_HALF_COST))
+  return action.impactScore - costPenalty
 }
 
 /* -------------------------------------------------------------------------- */
@@ -485,7 +506,7 @@ export default async function handler(
   }
 
   const actions = [...permitted]
-    .sort((a, b) => impactPerDollar(b) - impactPerDollar(a))
+    .sort((a, b) => rankingWeight(b) - rankingWeight(a))
     .slice(0, 7)
     // Renumber so ids match display order and stay stable as React keys.
     .map((action, index) => ({ ...action, id: `action-${index + 1}` }))

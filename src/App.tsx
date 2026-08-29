@@ -155,7 +155,7 @@ export default function App() {
         <SectionHeading
           eyebrow="Step two"
           title="Adaptation Planner"
-          description="Three questions about your place, then a ranked list of what is worth doing, cheapest real impact first. Renters only ever get actions they are allowed to take."
+          description="Three questions about your place, then a ranked list of what is worth doing, most effective first with cheaper wins favoured. Renters only ever get actions they are allowed to take."
         />
 
         {profile ? null : (

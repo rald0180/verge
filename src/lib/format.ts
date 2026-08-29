@@ -103,7 +103,7 @@ export const DIMENSION_META: Readonly<Record<RiskDimension, DimensionMeta>> = {
 
 export const CONFIDENCE_LABELS: Readonly<Record<Confidence, string>> = {
   observed: 'Measured',
-  modelled: 'Modelled projection',
+  modelled: 'Modelled',
   indicative: 'Indicative estimate',
 }
 

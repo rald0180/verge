@@ -1,6 +1,5 @@
 import { Clock, Wallet } from 'lucide-react'
 
-import { Badge } from '../ui/Badge'
 import { Card } from '../ui/Card'
 import { DIMENSION_META, formatCostRange, formatEffort } from '../../lib/format'
 import type { AdaptationAction } from '../../lib/types'
@@ -22,7 +21,17 @@ export function ActionCard({ action }: ActionCardProps) {
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-sm font-medium text-zinc-100">{action.title}</h3>
-          <Badge score={action.impactScore} />
+          {/*
+            Deliberately NOT the Badge primitive. Badge paints from the risk
+            scale, so a high-impact action — the best thing on the page —
+            rendered as "SEVERE · 90" in red, and announced to screen readers
+            as "risk, 90 out of 100". Exactly backwards. Section 4 also
+            reserves those five colours for risk levels only.
+          */}
+          <span className="shrink-0 rounded-full bg-surface-raised px-4 py-1 text-xs uppercase tracking-widest text-zinc-300">
+            Impact {action.impactScore}
+            <span className="sr-only"> out of 100, the model’s own estimate</span>
+          </span>
         </div>
 
         <p className="text-sm text-zinc-400">{action.what}</p>

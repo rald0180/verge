@@ -29,27 +29,53 @@ Three features, and only three:
 
 ## Status
 
-**Phase 1 of 6 — skeleton.** The toolchain, the type contract, the design
-system, the four data wrappers and the scoring maths are in place, and address
-lookup works end to end against live OpenStreetMap data. The risk dials, the
-planner and the audit render their real empty states and are wired to their
-contracts; the two serverless routes validate input and return a typed
-`not-implemented` rather than placeholder data. Build progress is logged
-honestly in [DECISIONS.md](DECISIONS.md).
+**Phase 5 of 6 — polish.** All three features work end to end against live data
+and are deployed. Address lookup, four scored risk dimensions, the
+observed-versus-projected chart, the Claude-generated adaptation plan with PDF
+export, and the vision-based street audit are all working at the live URL.
+
+Remaining: the pitch video and the Devpost write-up.
+
+The build is logged honestly, including the mistakes, in
+[DECISIONS.md](DECISIONS.md) — two fabricated citations caught before release,
+a flood score that moved 50 points because a street-level query resolved 570 m
+away, a lazy import that tripled the bundle because one static import defeated
+it, and an air-quality dial that claimed to be "Measured" when it never was.
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Risk Lens](docs/screenshots/02-risk-lens-desktop.png) | ![Adaptation Planner](docs/screenshots/03-plan-desktop.png) |
+| **Risk Lens** — four dimensions scored for one coordinate, each with its plain-language verdict and the numbers behind it | **Adaptation Planner** — ranked, costed actions for this specific profile, renter-filtered server-side |
+
+![Street Audit](docs/screenshots/04-street-audit-desktop.png)
+
+**Street Audit** — surfaces read from a photograph, a cooling score, and three
+interventions whose temperature ranges come from cited literature rather than
+from the model.
+
+![Mobile](docs/screenshots/05-risk-lens-mobile.png)
+
+Regenerate these with `node scripts/screenshots.mjs` while the dev server is
+running.
 
 ## Running it
 
 ```bash
 npm install
-npm run dev
+npx vercel dev
 ```
+
+**Use `vercel dev`, not `npm run dev`.** The `/api` routes are Vercel serverless
+functions; the plain Vite dev server does not serve them, so geocoding, the
+planner and the street audit all fail silently under `npm run dev`. That
+dev/prod divergence is what caused the Phase 1 deployment bug.
 
 ```bash
-npm run build
-```
-
-The `/api` routes are Vercel serverless functions and are not served by the Vite
-dev server. Use `vercel dev` to exercise them locally. `ANTHROPIC_API_KEY` is
+npm run build   # tsc across three projects, then vite build
+npm test        # unit tests for the pure scoring maths
+``` `ANTHROPIC_API_KEY` is
 read only inside `/api` and never reaches the client bundle — see
 [.env.example](.env.example).
 

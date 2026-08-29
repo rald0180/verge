@@ -200,7 +200,7 @@ export interface AdaptationPlan {
   readonly dwelling: DwellingProfile
   readonly placeName: string
   readonly dominantRisk: RiskDimension
-  /** 5-7 actions, sorted by impact per dollar before they reach React. */
+  /** 5-7 actions, ranked by impact with a bounded cost penalty, before they reach React. */
   readonly actions: readonly AdaptationAction[]
   readonly summary: string
 }

@@ -666,3 +666,81 @@ the same NodeNext requirement that broke the Phase 1 deployment. Caught locally
 this time by `tsc -b`, because the build command was pinned in Phase 2 to run
 it. The band scale now has one definition shared by client and server rather
 than a duplicated copy.
+
+---
+
+## 2026-08-29 — Phase 5, polish
+
+Reading the rendered page rather than the source found two genuine defects that
+code review had missed for two phases.
+
+### The best action was painted red and announced as danger
+
+`ActionCard` rendered `impactScore` through the `Badge` primitive. Badge picks
+its colour from the risk scale, so the top-ranked action — the single most
+useful thing on the page — displayed as **"SEVERE · 90" in red**, and announced
+itself to screen readers as *"risk, 90 out of 100"*.
+
+Exactly inverted: high impact is good. It also broke section 4's rule that the
+five risk colours may only ever mean a risk level.
+
+I had flagged this in an earlier answer and not fixed it. It only became
+undeniable when the page was read as a user reads it. Impact is now a neutral
+pill with honest screen-reader text naming it as the model's own estimate.
+
+### Impact per dollar was degenerate
+
+The spec said "sorted by impact per dollar". Implemented literally, dividing
+impact by cost made cost the *only* variable that mattered: on real output a $0
+admin task scoring 45 outranked ceiling insulation scoring 85 by two hundred to
+one, and the two most effective actions in every plan sorted last. "Cheapest
+first" is not "best value first".
+
+Two alternatives were rejected on inspection. Ranking by impact alone ignores
+cost. A comparator treating near-equal impacts as ties and preferring the
+cheaper is **non-transitive** — with impacts 88, 85 and 78 and an 8-point
+window, 88 ties 85 and 85 ties 78 but 88 does not tie 78, which is undefined
+behaviour for `Array.sort` and a latent crash.
+
+Now a single scalar: impact minus `15 × cost/(cost + 200)`. The penalty is
+bounded below 15 points by construction, so impact stays dominant and a cheap
+action overtakes a dearer one only when their impacts are genuinely close.
+CLAUDE.md section 2 amended, since the spec's own rule was the problem.
+
+### scoring.ts is finally tested
+
+Hard rule 2 has committed since Phase 1 that the scoring maths "must be
+unit-testable and it will be tested". It had not been. Twenty tests now cover
+the ramps, the band boundaries at every edge, the null-handling in the archive
+helpers, and the partial-year guard.
+
+The valuable ones lock in real verified values rather than restating the code:
+the Subiaco heat score of 59 derived independently in Python from ERA5 and
+CMIP6 before any UI existed, and flood scores of 28 and 78 for the two
+coordinates that one street query resolved to on different days. If someone
+edits a ramp, those fail.
+
+### Copy that had gone stale, and one more overstatement
+
+Changing the ranking made three pieces of user-facing copy wrong, all still
+promising "cheapest real impact first". Fixed in the section description, the
+plan footer and the empty state.
+
+`CONFIDENCE_LABELS.modelled` read "Modelled projection", which is right for the
+2050 heat figure and wrong for a current air-quality estimate — a projection is
+about the future. Now just "Modelled".
+
+The trend chart said "Measured history in grey". ERA5 is a reanalysis, which
+blends observations with a model; this is the same overstatement as the air
+dial claiming to be "Measured", caught in the same spirit. Now "Historical
+reanalysis".
+
+### Screenshots
+
+`scripts/screenshots.mjs` drives Playwright to capture five states at 1440 and
+390 px. Worth automating rather than doing by hand because the UI will change
+again before submission and the README should not drift.
+
+One detail: a full-page capture renders `position: sticky` at its scrolled
+offset, so the header appeared a second time halfway down the image and read as
+a rendering bug. The script pins it to static for the capture only.

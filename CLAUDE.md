@@ -85,7 +85,7 @@ The risk profile plus a few answers about the dwelling go to Claude, which retur
 
 * Three quick inputs, nothing more: dwelling type (house, apartment, sharehouse), own or rent, budget band.
 * Claude returns 5 to 7 actions as strict JSON, each with: title, what it does, which risk it reduces, estimated cost in AUD, effort in hours, an impact score, and a payback note.
-* Actions are sorted by impact per dollar and rendered as cards. Renters get renter-legal actions only. This detail matters and judges notice it.
+* Actions are ranked by impact with a bounded penalty for cost, and rendered as cards. (Amended 2026-08-29, Phase 5: a literal impact-per-dollar ratio was degenerate — dividing by cost made cost the only variable, so a $0 admin task outranked ceiling insulation 200 to 1 and the two most effective actions sorted last. The penalty is now capped at 15 points, so impact stays dominant. Reasoning in api/plan.ts.) Renters get renter-legal actions only. This detail matters and judges notice it.
 * The whole plan exports to a single-page PDF. This is what makes it feel like a real product rather than a demo.
 
 This carries Originality and Adherence to Track.
