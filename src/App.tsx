@@ -1,7 +1,8 @@
-import { MapPin } from 'lucide-react'
+import { ImagePlus, MapPin } from 'lucide-react'
 
 import { AddressSearch } from './components/lens/AddressSearch'
 import { AppShell } from './components/layout/AppShell'
+import { Button } from './components/ui/Button'
 import { Badge } from './components/ui/Badge'
 import { Card } from './components/ui/Card'
 import { CoolingScore } from './components/audit/CoolingScore'
@@ -179,7 +180,22 @@ export default function App() {
           title="Street Audit"
         />
 
-        {audit.state.status === 'idle' ? (
+        {/*
+          The drop zone stays mounted on error, not just when idle. It used to
+          render only in the idle state, so a photo the server rejected left the
+          user on an error card with no way back — ErrorState only offers its
+          button for retryable failures, and "that file is unreadable" is not
+          one. The only recovery was reloading the page.
+
+          Re-dropping is also the correct recovery for the retryable failures:
+          the file is not retained in state, so even a network error needs the
+          photo choosing again. One affordance covers every case.
+        */}
+        {audit.state.status === 'error' ? (
+          <ErrorState error={audit.state.error} title="Could not audit that photo" />
+        ) : null}
+
+        {audit.state.status === 'idle' || audit.state.status === 'error' ? (
           <PhotoDrop onSelect={(file, previewUrl) => void audit.analyse(file, previewUrl)} />
         ) : null}
 
@@ -190,24 +206,25 @@ export default function App() {
           </div>
         ) : null}
 
-        {audit.state.status === 'error' ? (
-          <ErrorState
-            error={audit.state.error}
-            onRetry={audit.reset}
-            title="Could not audit that photo"
-          />
-        ) : null}
-
         {audit.state.status === 'ready' ? (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <SurfaceOverlay
-              previewUrl={audit.state.previewUrl}
-              surfaces={audit.state.audit.surfaces}
-            />
-            <div className="space-y-4">
-              <CoolingScore audit={audit.state.audit} />
-              <Interventions interventions={audit.state.audit.interventions} />
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <SurfaceOverlay
+                previewUrl={audit.state.previewUrl}
+                surfaces={audit.state.audit.surfaces}
+              />
+              <div className="space-y-4">
+                <CoolingScore audit={audit.state.audit} />
+                <Interventions interventions={audit.state.audit.interventions} />
+              </div>
             </div>
+
+            {/* Same dead end existed after a success: no way to audit a
+                second photo without reloading. */}
+            <Button variant="ghost" size="sm" onClick={audit.reset}>
+              <ImagePlus className="h-4 w-4" aria-hidden="true" />
+              Audit another photo
+            </Button>
           </div>
         ) : null}
       </section>
