@@ -59,7 +59,7 @@ export function Header() {
       <div className="mx-auto flex max-w-5xl items-center justify-center gap-4 px-6 py-5 md:px-8">
         <VergeMark className="h-12 w-12 shrink-0 text-accent" />
 
-        <p className="text-3xl font-medium lowercase leading-none tracking-tight text-zinc-100">
+        <p className="text-3xl font-bold lowercase leading-none tracking-tight text-zinc-100">
           verge
         </p>
       </div>
