@@ -18,8 +18,8 @@ export function SectionHeading({
   action,
 }: SectionHeadingProps) {
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-      <div className="max-w-2xl">
+    <div className="flex flex-col items-center gap-4">
+      <div className="max-w-2xl text-center">
         <p className="text-xs uppercase tracking-widest text-zinc-500">{eyebrow}</p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">
           {title}

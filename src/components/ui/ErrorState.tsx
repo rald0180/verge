@@ -33,9 +33,9 @@ export function ErrorState({ error, onRetry, title }: ErrorStateProps) {
   return (
     <div
       role="alert"
-      className="flex flex-col items-start gap-4 rounded-2xl bg-surface p-6 ring-1 ring-white/10 md:p-8"
+      className="flex flex-col items-center gap-4 rounded-2xl bg-surface p-6 text-center ring-1 ring-white/10 md:p-8"
     >
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col items-center gap-3">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-risk-severe/10">
           <AlertTriangle className="h-4 w-4 text-risk-severe" aria-hidden="true" />
         </span>

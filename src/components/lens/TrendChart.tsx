@@ -111,7 +111,7 @@ export function TrendChart({
             2050" is the fact people repeat afterwards, and burying it in the
             axis labels wasted it.
           */}
-          <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-2">
+          <div className="mt-4 flex flex-wrap items-end justify-center gap-x-6 gap-y-2">
             <div>
               <p className="text-4xl font-semibold tracking-tight text-zinc-100">
                 {Math.round(projection.baselineMean)}

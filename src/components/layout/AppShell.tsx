@@ -17,12 +17,14 @@ export function AppShell({ children }: AppShellProps) {
     <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8 md:px-8 md:py-12">
+      {/* text-align inherits, so centring here carries to every descendant.
+          Flex rows that lay out horizontally are centred individually. */}
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8 text-center md:px-8 md:py-12">
         <div className="space-y-8">{children}</div>
       </main>
 
       <footer className="border-t border-white/10">
-        <div className="mx-auto max-w-5xl space-y-2 px-6 py-8 text-xs text-zinc-500 md:px-8">
+        <div className="mx-auto max-w-5xl space-y-2 px-6 py-8 text-center text-xs text-zinc-500 md:px-8">
           <p>
             Verge reads live data from Open-Meteo and OpenStreetMap. Flood figures are
             indicative estimates built from elevation and rainfall history, not a

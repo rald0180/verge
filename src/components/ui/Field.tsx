@@ -47,7 +47,7 @@ export function Field({
     <div className="w-full">
       <label
         htmlFor={id}
-        className="mb-2 block text-xs uppercase tracking-widest text-zinc-500"
+        className="mb-2 block text-center text-xs uppercase tracking-widest text-zinc-500"
       >
         {label}
       </label>
@@ -71,7 +71,7 @@ export function Field({
           aria-describedby={description ? describedById : undefined}
           onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(event.target.value)}
           className={cx(
-            'h-12 w-full min-w-0 bg-transparent text-zinc-100',
+            'h-12 w-full min-w-0 bg-transparent text-center text-zinc-100',
             'placeholder:text-zinc-500 focus:outline-none',
           )}
         />
@@ -81,7 +81,7 @@ export function Field({
       {description ? (
         <p
           id={describedById}
-          className={cx('mt-2 text-sm', error ? 'text-risk-severe' : 'text-zinc-400')}
+          className={cx('mt-2 text-center text-sm', error ? 'text-risk-severe' : 'text-zinc-400')}
         >
           {description}
         </p>

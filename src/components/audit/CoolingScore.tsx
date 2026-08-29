@@ -21,7 +21,7 @@ export function CoolingScore({ audit }: CoolingScoreProps) {
   return (
     <Card>
       <div className="space-y-6">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col items-center gap-4">
           <div>
             <p className="text-xs uppercase tracking-widest text-zinc-500">
               Cooling score

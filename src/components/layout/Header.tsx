@@ -10,7 +10,7 @@ import { Sprout } from 'lucide-react'
 export function Header() {
   return (
     <header className="sticky top-0 z-10 border-b border-white/10 bg-canvas/80 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center gap-4 px-6 py-4 md:px-8">
+      <div className="mx-auto flex max-w-5xl items-center justify-center gap-4 px-6 py-4 md:px-8">
         <span
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-quiet"
           aria-hidden="true"

@@ -46,16 +46,16 @@ export function SurfaceOverlay({ previewUrl, surfaces }: SurfaceOverlayProps) {
 
         <ul className="space-y-3">
           {surfaces.map((surface) => (
-            <li key={surface.kind} className="flex items-center gap-4">
-              <span
-                className={cx('h-2 w-2 shrink-0 rounded-full', ROLE_STYLES[surface.thermalRole])}
-                aria-hidden="true"
-              />
-              <span className="flex-1 text-sm text-zinc-100">{surface.label}</span>
-              <span className="text-sm text-zinc-400">
-                about {Math.round(surface.coveragePct)}% of frame
+            <li key={surface.kind} className="flex flex-col items-center gap-1">
+              <span className="flex items-center justify-center gap-2">
+                <span
+                  className={cx('h-2 w-2 shrink-0 rounded-full', ROLE_STYLES[surface.thermalRole])}
+                  aria-hidden="true"
+                />
+                <span className="text-sm text-zinc-100">{surface.label}</span>
               </span>
-              <span className="hidden text-xs uppercase tracking-widest text-zinc-500 sm:inline">
+              <span className="text-sm text-zinc-400">
+                about {Math.round(surface.coveragePct)}% of frame ·{' '}
                 {ROLE_LABELS[surface.thermalRole]}
               </span>
             </li>

@@ -19,7 +19,7 @@ export function ActionCard({ action }: ActionCardProps) {
   return (
     <Card>
       <div className="space-y-4">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col items-center gap-2">
           <h3 className="text-sm font-medium text-zinc-100">{action.title}</h3>
           {/*
             Deliberately NOT the Badge primitive. Badge paints from the risk
@@ -36,7 +36,7 @@ export function ActionCard({ action }: ActionCardProps) {
 
         <p className="text-sm text-zinc-400">{action.what}</p>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           {action.reduces.map((dimension) => (
             <span
               key={dimension}
@@ -53,8 +53,8 @@ export function ActionCard({ action }: ActionCardProps) {
         </div>
 
         <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="flex items-start gap-2">
-            <Wallet className="mt-1 h-4 w-4 shrink-0 text-zinc-500" aria-hidden="true" />
+          <div className="flex flex-col items-center gap-2">
+            <Wallet className="h-4 w-4 shrink-0 text-zinc-500" aria-hidden="true" />
             <div>
               <dt className="text-xs uppercase tracking-widest text-zinc-500">
                 Estimated cost
@@ -66,8 +66,8 @@ export function ActionCard({ action }: ActionCardProps) {
             </div>
           </div>
 
-          <div className="flex items-start gap-2">
-            <Clock className="mt-1 h-4 w-4 shrink-0 text-zinc-500" aria-hidden="true" />
+          <div className="flex flex-col items-center gap-2">
+            <Clock className="h-4 w-4 shrink-0 text-zinc-500" aria-hidden="true" />
             <div>
               <dt className="text-xs uppercase tracking-widest text-zinc-500">Effort</dt>
               <dd className="text-sm text-zinc-100">{formatEffort(action.effortHours)}</dd>

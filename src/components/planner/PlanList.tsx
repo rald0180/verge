@@ -117,8 +117,8 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <p className="max-w-2xl text-sm text-zinc-400">{plan.summary}</p>
+      <div className="flex flex-col items-center gap-4">
+        <p className="max-w-2xl text-center text-sm text-zinc-400">{plan.summary}</p>
         <Button variant="ghost" size="sm" loading={exporting} onClick={() => void handleExport()}>
           <Download className="h-4 w-4" aria-hidden="true" />
           Save as PDF

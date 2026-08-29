@@ -35,8 +35,8 @@ interface PlaceCardProps {
 function PlaceCard({ place, profile }: PlaceCardProps) {
   return (
     <Card>
-      <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-        <div className="flex min-w-0 items-start gap-4">
+      <div className="flex flex-col items-center gap-6">
+        <div className="flex min-w-0 flex-col items-center gap-3">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-quiet">
             <MapPin className="h-4 w-4 text-accent" aria-hidden="true" />
           </span>
@@ -51,12 +51,12 @@ function PlaceCard({ place, profile }: PlaceCardProps) {
         </div>
 
         {profile ? (
-          <div className="shrink-0 space-y-2 md:text-right">
+          <div className="shrink-0 space-y-2">
             <p className="text-xs uppercase tracking-widest text-zinc-500">
               Overall risk
             </p>
             <Badge score={profile.composite} />
-            <p className="max-w-xs text-sm text-zinc-400">
+            <p className="mx-auto max-w-xs text-sm text-zinc-400">
               Scored {profile.composite} of 100 across four dimensions, weighted
               equally. The biggest driver here is{' '}
               {DIMENSION_META[profile.dominant].label.toLowerCase()}.
@@ -92,7 +92,7 @@ export default function App() {
         <h1 className="text-3xl font-semibold tracking-tight text-zinc-100 md:text-5xl">
           Climate adaptation that starts at your front door
         </h1>
-        <p className="max-w-2xl text-sm text-accent-text">
+        <p className="mx-auto max-w-2xl text-sm text-accent-text">
           Climate reports tell you the planet is in trouble. Verge tells you what to do
           about your house.
         </p>

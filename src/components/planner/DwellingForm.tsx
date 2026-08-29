@@ -39,10 +39,10 @@ function ChoiceRow<T extends string>({
 }: ChoiceRowProps<T>) {
   return (
     <fieldset disabled={disabled}>
-      <legend className="mb-2 text-xs uppercase tracking-widest text-zinc-500">
+      <legend className="mb-2 w-full text-center text-xs uppercase tracking-widest text-zinc-500">
         {label}
       </legend>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap justify-center gap-2">
         {options.map((option) => (
           <Button
             key={option}
@@ -100,7 +100,7 @@ export function DwellingForm({
           disabled={disabled || loading}
         />
 
-        <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center">
+        <div className="flex flex-col items-center gap-4 pt-2">
           <Button
             loading={loading}
             disabled={disabled}

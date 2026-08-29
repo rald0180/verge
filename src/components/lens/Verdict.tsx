@@ -33,7 +33,7 @@ export function Verdict({ score, showEvidence = true }: VerdictProps) {
     <div className="space-y-3">
       <p className="text-sm text-zinc-400">{score.headline}</p>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-2">
         <span
           className={cx(
             'inline-flex rounded-full bg-surface-raised px-4 py-1',
