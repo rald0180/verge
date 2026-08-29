@@ -138,14 +138,6 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
         </motion.div>
       ))}
 
-      <p className="text-xs text-zinc-500">
-        Costs are estimates in Australian dollars, not quotes. Impact scores are the model’s own
-        estimate, not a measurement. Actions are ranked by impact, with cheaper wins favoured
-        where impact is close.{' '}
-        {plan.dwelling.tenure === 'rent'
-          ? 'Only actions a tenant can take without the owner’s permission are shown.'
-          : 'Some actions alter the building and may need approval.'}
-      </p>
     </div>
   )
 }

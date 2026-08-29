@@ -28,10 +28,6 @@ export function AppShell({ children }: AppShellProps) {
             indicative estimates built from elevation and rainfall history, not a
             substitute for an official flood map. Costs are estimates in AUD.
           </p>
-          <p>
-            Built for NextStep Hacks 2026 with heavy AI assistance, which we would
-            rather say plainly than have you work out from the commit history.
-          </p>
         </div>
       </footer>
     </div>

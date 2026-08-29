@@ -40,11 +40,6 @@ export function AddressSearch({ onSearch, loading = false, error }: AddressSearc
         autoComplete="street-address"
         disabled={loading}
         {...(error === undefined ? {} : { error })}
-        {...(error === undefined
-          ? {
-              hint: 'Include a street number if you can — flood risk changes sharply along a single street. Nothing you type is stored.',
-            }
-          : {})}
         trailing={
           <Button type="submit" size="sm" loading={loading} disabled={trimmed.length < 3}>
             <Search className="h-4 w-4" aria-hidden="true" />

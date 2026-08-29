@@ -140,9 +140,6 @@ export function TrendChart({
             </div>
           </div>
 
-          <p className="mt-4 text-sm text-zinc-400">
-            Historical reanalysis in grey, modelled projection in colour. {projection.scenario}
-          </p>
         </div>
 
         <div className="h-80 w-full">

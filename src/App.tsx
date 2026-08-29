@@ -89,17 +89,9 @@ export default function App() {
     <AppShell>
       {/* Hero */}
       <section className="space-y-4 pt-4 md:pt-8">
-        <p className="text-xs uppercase tracking-widest text-zinc-500">
-          NextStep Hacks 2026 · Earth Forward
-        </p>
         <h1 className="text-3xl font-semibold tracking-tight text-zinc-100 md:text-5xl">
           Climate adaptation that starts at your front door
         </h1>
-        <p className="max-w-2xl text-sm text-zinc-400">
-          Type in an address and Verge builds a hyperlocal climate risk profile for that
-          exact spot out of real observations and downscaled projections, then turns it
-          into a ranked, costed plan of things you can actually do this month.
-        </p>
         <p className="max-w-2xl text-sm text-accent-text">
           Climate reports tell you the planet is in trouble. Verge tells you what to do
           about your house.
@@ -155,7 +147,6 @@ export default function App() {
         <SectionHeading
           eyebrow="Step two"
           title="Adaptation Planner"
-          description="Three questions about your place, then a ranked list of what is worth doing, most effective first with cheaper wins favoured. Renters only ever get actions they are allowed to take."
         />
 
         {profile ? null : (
@@ -186,7 +177,6 @@ export default function App() {
         <SectionHeading
           eyebrow="Step three"
           title="Street Audit"
-          description="Drop in a photo of your street and Verge reads the surfaces in it, scores how well the spot handles heat, and names three things that would cool it down."
         />
 
         {audit.state.status === 'idle' ? (
