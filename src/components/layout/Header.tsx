@@ -1,5 +1,9 @@
 /**
- * The Verge lockup: front-door mark, wordmark, and the line underneath.
+ * The Verge lockup: front-door mark and wordmark, centred.
+ *
+ * The line underneath was tried here and taken out again — it is the page's
+ * own h1 a few hundred pixels below, so the header was making everyone read
+ * the same sentence twice before seeing anything.
  *
  * The mark is a threshold standing on a ground line with something growing
  * inside it — "climate adaptation that starts at your front door", drawn. It is
@@ -55,14 +59,9 @@ export function Header() {
       <div className="mx-auto flex max-w-5xl items-center justify-center gap-4 px-6 py-5 md:px-8">
         <VergeMark className="h-12 w-12 shrink-0 text-accent" />
 
-        <div className="text-left">
-          <p className="text-3xl font-medium lowercase leading-none tracking-tight text-zinc-100">
-            verge
-          </p>
-          <p className="mt-1 text-sm lowercase text-accent-text">
-            climate adaptation that starts at your front door
-          </p>
-        </div>
+        <p className="text-3xl font-medium lowercase leading-none tracking-tight text-zinc-100">
+          verge
+        </p>
       </div>
     </header>
   )
