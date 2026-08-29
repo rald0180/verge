@@ -104,7 +104,6 @@ export default function App() {
         <SectionHeading
           eyebrow="Step one"
           title="Risk Lens"
-          description="Four dimensions, scored 0 to 100 for your coordinate: heat, flood, air, and drought and fire weather."
         />
 
         <Card>

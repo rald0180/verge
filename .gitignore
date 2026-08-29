@@ -15,3 +15,7 @@ npm-debug.log*
 # Pitch-video footage: large, and reproducible with scripts/record.mjs.
 # The script and docs/VIDEO.md are tracked; the .webm files are not.
 docs/footage/
+
+# Local test imagery for the Street Audit. Not committed: these are Google
+# Street View captures, and the repo is public.
+test-photos/
