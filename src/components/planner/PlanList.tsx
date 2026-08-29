@@ -83,8 +83,7 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
       <div className="space-y-4">
         <p className="text-sm text-zinc-400">
           Reading your risk profile and working out what is worth doing. This takes
-          about half a minute — it is thinking about your specific scores, not
-          looking up a checklist.
+          about half a minute!
         </p>
         {[0, 1, 2].map((index) => (
           <Card key={index}>
