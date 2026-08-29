@@ -158,7 +158,17 @@ Verge tells you what to do about your house."*
 
 ---
 
-## Voiceover
+## Voiceover — read it yourself
+
+**Use [`VOICEOVER-SCRIPT.md`](VOICEOVER-SCRIPT.md), not the generated audio
+below.** Judges score Learning — "did the team stretch themselves?" — and a
+builder explaining their own decisions lands very differently from a narrator
+reading ad copy. The self-read script is first person, ~537 words, 3.6–4.5
+minutes depending on pace, and carries the mistakes as first-hand accounts.
+
+The generated files below remain as a fallback and as a pacing reference.
+
+## Generated voiceover (fallback)
 
 Generated with Higgsfield Seed Audio and committed to `docs/voiceover/`. These
 cost credits to produce, so they are tracked rather than gitignored.
