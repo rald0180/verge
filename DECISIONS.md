@@ -744,3 +744,45 @@ again before submission and the README should not drift.
 One detail: a full-page capture renders `position: sticky` at its scrolled
 offset, so the header appeared a second time halfway down the image and read as
 a rendering bug. The script pins it to static for the capture only.
+
+---
+
+## 2026-08-29 — Design pass
+
+Three changes, all inside the existing visual system — no new colours, radii or
+primitives, so section 4 is untouched.
+
+### Evidence moved behind a disclosure
+
+Every dial carried three or four lines of small grey source text, permanently
+on screen. That is the honesty rule working, and it was costing the design far
+more than it had to: four dials of it turned the Risk Lens into a spreadsheet
+and buried the actual verdicts.
+
+It is now one "How we got this" control per dial. The confidence label —
+`Measured` / `Modelled` / `Indicative estimate` — stays visible either way, so
+nothing that *qualifies* a number has moved out of sight. One click is not
+hiding it. This was by far the biggest visual win available and it cost
+nothing in substance.
+
+### The dominant risk leads
+
+Four identically weighted cards made the reader do the comparison themselves,
+when the profile already knows which dimension is the problem. The dominant
+risk is now sorted first, raised onto `surface-raised` with an accent ring, and
+labelled "Biggest driver here".
+
+At the test address this puts Flood at 78 in front of Heat at 62, which is the
+correct story and was previously the third card down.
+
+### The chart leads with its two numbers
+
+"12 days a year today, 36 by 2050" is the fact people repeat after seeing this
+app, and it was rendered only as the shape of a line and some axis ticks. The
+chart now opens with both figures at 4xl, the projected one in its risk band
+colour, each with the window it was averaged over. Chart height went 64 to 80.
+
+`ClimateProjection` gained `baselineMean`, `projectedMean` and the two window
+labels rather than having the chart re-derive them. If the chart computed its
+own means it could silently disagree with the heat dial about what "today"
+means; passing them through makes that impossible.

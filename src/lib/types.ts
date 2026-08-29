@@ -142,6 +142,17 @@ export interface ClimateProjection {
   readonly projected: readonly ProjectionPoint[]
   /** e.g. "CMIP6 multi-model mean, SSP2-4.5". Shown verbatim in the UI. */
   readonly scenario: string
+  /**
+   * The two numbers the chart exists to communicate, pre-computed over their
+   * named windows so the chart never has to re-derive them and risk using a
+   * different window than the heat dial did.
+   */
+  readonly baselineMean: number
+  readonly projectedMean: number
+  /** e.g. "1991–2020 average". */
+  readonly baselineWindowLabel: string
+  /** e.g. "2041–2050 average". */
+  readonly projectedWindowLabel: string
 }
 
 export interface RiskProfile {

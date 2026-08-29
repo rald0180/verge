@@ -288,6 +288,12 @@ export function useRiskProfile(): UseRiskProfile {
       observed: observedByYear,
       projected: projectedByYear,
       scenario: SCENARIO_NOTE,
+      // The same windows the heat dial used, so the chart and the dial can
+      // never disagree about what "today" and "by 2050" mean.
+      baselineMean: observedMean,
+      projectedMean,
+      baselineWindowLabel: `${BASELINE_FROM_YEAR}–${BASELINE_TO_YEAR} average`,
+      projectedWindowLabel: `${FUTURE_FROM_YEAR}–${FUTURE_TO_YEAR} average`,
     }
 
     const profile: RiskProfile = {

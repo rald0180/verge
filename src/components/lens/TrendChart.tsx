@@ -1,7 +1,7 @@
 import { LineChart, Line, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
-import { TrendingUp } from 'lucide-react'
+import { ArrowRight, TrendingUp } from 'lucide-react'
 
-import { BAND_STYLES } from '../../lib/format'
+import { BAND_STYLES, cx } from '../../lib/format'
 import { Card } from '../ui/Card'
 import { ErrorState } from '../ui/ErrorState'
 import { Skeleton } from '../ui/Skeleton'
@@ -104,12 +104,48 @@ export function TrendChart({
           <p className="text-xs uppercase tracking-widest text-zinc-500">
             {projection.label}
           </p>
-          <p className="mt-2 text-sm text-zinc-400">
+
+          {/*
+            The two numbers this chart exists to communicate, stated at the
+            size they deserve. A line chart shows a shape; "15 today, 38 by
+            2050" is the fact people repeat afterwards, and burying it in the
+            axis labels wasted it.
+          */}
+          <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-2">
+            <div>
+              <p className="text-4xl font-semibold tracking-tight text-zinc-100">
+                {Math.round(projection.baselineMean)}
+                <span className="ml-2 text-sm font-normal text-zinc-500">
+                  {projection.unit} today
+                </span>
+              </p>
+              <p className="text-xs text-zinc-500">{projection.baselineWindowLabel}</p>
+            </div>
+
+            <ArrowRight className="mb-6 h-5 w-5 shrink-0 text-zinc-600" aria-hidden="true" />
+
+            <div>
+              <p
+                className={cx(
+                  'text-4xl font-semibold tracking-tight',
+                  BAND_STYLES[band].text,
+                )}
+              >
+                {Math.round(projection.projectedMean)}
+                <span className="ml-2 text-sm font-normal text-zinc-500">
+                  {projection.unit} by 2050
+                </span>
+              </p>
+              <p className="text-xs text-zinc-500">{projection.projectedWindowLabel}</p>
+            </div>
+          </div>
+
+          <p className="mt-4 text-sm text-zinc-400">
             Historical reanalysis in grey, modelled projection in colour. {projection.scenario}
           </p>
         </div>
 
-        <div className="h-64 w-full">
+        <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={[...rows]} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
               <CartesianGrid stroke="rgb(255 255 255 / 0.06)" vertical={false} />

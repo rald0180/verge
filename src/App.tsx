@@ -130,7 +130,7 @@ export default function App() {
 
         <RiskGrid
           loading={busy}
-          {...(profile ? { scores: profile.scores } : {})}
+          {...(profile ? { scores: profile.scores, dominant: profile.dominant } : {})}
           {...(lensError ? { error: lensError } : {})}
           onRetry={() => void lens.retry()}
         />
