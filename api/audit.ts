@@ -114,7 +114,7 @@ const COOLING_LIBRARY: Readonly<Record<string, CoolingEntry>> = {
     measures: 'indoor peak temperature',
     scaleNote: 'one building, non-air-conditioned residential',
     sourceNote:
-      'US EPA, Using Cool Roofs to Reduce Heat Islands: maximum indoor temperature lowered 1.2-3.3 °C in non-air-conditioned homes. The neighbourhood air-temperature effect of one roof is far smaller, around 0.3 °C even at full coverage.',
+      'US EPA, Using Cool Roofs to Reduce Heat Islands: maximum indoor temperature lowered 1.2-3.3 °C in non-air-conditioned homes. The EPA page notes cool roofs also lower temperatures outside the building but publishes no figure for it, so none is quoted here.',
   },
   'green-roof': {
     title: 'Put planting on the roof or a hard upper surface',
@@ -130,31 +130,21 @@ const COOLING_LIBRARY: Readonly<Record<string, CoolingEntry>> = {
     title: 'Lighten or shade the paving',
     description:
       'Replace or coat dark asphalt and concrete with a lighter-coloured, more reflective surface.',
-    coolingEffectC: { low: 0.5, high: 4.0 },
+    coolingEffectC: { low: 0.5, high: 3.5 },
     measures: 'air temperature',
-    scaleNote: 'street scale; the upper end generally requires active watering',
+    scaleNote: 'urban canyon; the top of the range is the best case, not the norm',
     sourceNote:
-      'Cool Pavements for the Mitigation of Urban Heat Island: A Global Perspective (IntechOpen, 2025): reported cooling of 0.5-4 °C, averaging about 1 °C and reaching 5 °C only where pavement is actively watered.',
+      'Cool Pavements for the Mitigation of Urban Heat Island: A Global Perspective (IntechOpen, 2025): reflective pavements lower air temperature in urban canyons by 0.5-3.5 °C. Permeable pavements average about 1 °C, reaching 5 °C only where actively watered.',
   },
   'replace-hard-with-planting': {
     title: 'Swap hard surface for planting',
     description:
       'Convert unused paving, gravel or bare soil to lawn, groundcover or garden bed.',
-    coolingEffectC: { low: 1.1, high: 1.3 },
+    coolingEffectC: { low: 0.9, high: 0.9 },
     measures: 'air temperature',
-    scaleNote: 'field measurement over grass-covered ground versus hard surface',
+    scaleNote: 'whole-park scale — a garden-sized patch will do less than this',
     sourceNote:
-      'Field studies of grass coverage report mean air temperature reductions of 1.18-1.26 °C relative to comparable hard surfaces.',
-  },
-  'shade-the-walls': {
-    title: 'Shade the walls and windows with planting or a structure',
-    description:
-      'Vegetation or an external screen intercepts sun before it reaches glass and masonry.',
-    coolingEffectC: { low: 0.5, high: 1.9 },
-    measures: 'air temperature',
-    scaleNote: 'immediately adjacent to the building',
-    sourceNote:
-      'Greenery placed along pavements and beside buildings is reported to reduce ambient air temperature by up to 1.87 °C; the lower bound reflects studies with sparser planting.',
+      'Bowler, Buyung-Ali, Knight & Pullin, “Urban greening to cool towns and cities: a systematic review of the empirical evidence”, Landscape and Urban Planning 97(3):147-155 (2010). Meta-analysis across studies: a park was on average 0.94 °C cooler during the day than a comparable non-green site. A single figure, not a range, because that is what the review reports.',
   },
 }
 

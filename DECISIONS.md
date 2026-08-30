@@ -1168,3 +1168,73 @@ Note this reverses the earlier reading of "should not move with the page". The
 complaint that time was the translucent background letting content show
 through; that fix stands. This is the separate question of whether it should
 occupy the viewport at all, and the answer is no.
+
+---
+
+## 2026-08-30 — Five actions, and a source audit that found four bad numbers
+
+**Five actions instead of five-to-seven.** The model was returning seven every
+time. Fewer actions is fewer generated tokens, and the plan now completes in
+**18.8s** against 22s at seven and ~25s before the effort change. A list that
+gets read beats a longer one that does not. CLAUDE.md section 2 amended.
+
+**Then re-checked every cooling figure against its actual source.** Four of the
+six did not survive intact. This is the second time this library has needed
+correcting, which is itself the lesson: numbers with a citation attached still
+have to be opened and read.
+
+Verified and correct as claimed:
+
+- **Plant shade trees, 0.3-1.5 °C.** npj Urban Sustainability (2025),
+  doi 10.1038/s42949-025-00277-x. Reports 0.8 °C for a 10% canopy increase and
+  1.5 °C for 30%. Exactly as we had it.
+- **Cool roof, 1.2-3.3 °C indoor.** US EPA page states "1.2–3.3°C (2.2 to
+  5.9°F)" for maximum indoor temperature in non-air-conditioned homes.
+- **Green roof, 0.6-3.0 °C surface.** Environmental Research Letters 11:064004
+  (2016), Chicago. Under 1 °C at 25% coverage, ~3 °C at 100%, near-surface air
+  ~0.6 °C. Exact.
+
+Wrong, and now fixed:
+
+1. **A fabricated range.** "Swap hard surface for planting" claimed field
+   studies reporting 1.18-1.26 °C. That figure is traceable to nothing —
+   searching returns unrelated work, and the suspicious precision of a
+   two-decimal range with no author is the same signature as the two invented
+   citations caught in Phase 5. Replaced with **Bowler, Buyung-Ali, Knight &
+   Pullin (2010)**, *Landscape and Urban Planning* 97(3):147-155, whose
+   meta-analysis found a park averaged **0.94 °C** cooler by day.
+
+2. **A second fabricated range, removed rather than re-sourced.** "Shade the
+   walls" claimed up to 1.87 °C, also unattributable. The vertical-greenery
+   literature reports outdoor reductions anywhere from 0.66 °C to 7.14 °C
+   depending on the study, so picking a number from that spread would have been
+   invention with extra steps. Deleted — and it largely duplicated "plant shade
+   trees", whose description already says to prioritise shade on walls and
+   windows.
+
+3. **A range wider than its source.** Paving was 0.5-**4.0** °C; the IntechOpen
+   chapter says reflective pavements lower urban-canyon air temperature by
+   0.5-**3.5** °C. Corrected, and the "averaging 1 °C, 5 °C when watered"
+   detail correctly reattributed to permeable pavements, which is what the
+   chapter says it about.
+
+4. **A number attributed to a source that does not contain it.** The cool-roof
+   note ended with "the neighbourhood air-temperature effect... around 0.3 °C
+   even at full coverage", sitting inside an EPA citation. The EPA page says
+   cool roofs lower outdoor temperatures but **publishes no figure**. The note
+   now says exactly that instead.
+
+**A model change fell out of it.** Bowler reports a single mean, not a range.
+Forcing it into `low`/`high` would have meant inventing a spread, so the entry
+carries 0.9 for both and `Interventions` renders a point estimate as "about
+−0.9 °C". Some evidence is a number, not an interval, and the UI can say so.
+
+Verified live afterwards: five actions, three interventions reading 0.3-1.5,
+0.5-3.5 and about 0.9, and no trace of 1.18, 1.26 or 1.87 anywhere in the
+rendered page.
+
+**What is still model-estimated, and labelled as such:** the plan's costs,
+effort hours and impact scores, and the audit's surface percentages. Those are
+judgements, not measurements, and every one carries the word "estimate" on
+screen. The risk dials are unchanged and remain real observational and
+projection data.

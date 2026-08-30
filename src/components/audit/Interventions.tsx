@@ -29,7 +29,9 @@ export function Interventions({ interventions }: InterventionsProps) {
 
             <div className="flex flex-wrap items-center justify-center gap-2">
               <span className="rounded-full bg-accent-quiet px-4 py-1 text-xs uppercase tracking-widest text-accent-text">
-                −{intervention.coolingEffectC.low} to −{intervention.coolingEffectC.high} °C
+                {intervention.coolingEffectC.low === intervention.coolingEffectC.high
+                  ? `about −${intervention.coolingEffectC.low} °C`
+                  : `−${intervention.coolingEffectC.low} to −${intervention.coolingEffectC.high} °C`}
               </span>
               <span className="text-xs uppercase tracking-widest text-zinc-500">
                 {intervention.measures}

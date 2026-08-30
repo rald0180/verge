@@ -96,7 +96,7 @@ const PLAN_SCHEMA: Record<string, unknown> = {
     },
     actions: {
       type: 'array',
-      description: 'Between 5 and 7 actions.',
+      description: 'Exactly 5 actions.',
       items: {
         type: 'object',
         additionalProperties: false,
@@ -309,7 +309,7 @@ The dominant risk here is ${dominantRisk}.
 Dwelling: ${dwelling.type}. ${tenureLine}
 Budget: they can spend ${BUDGET_GUIDANCE[dwelling.budget]}.
 
-Give 5 to 7 actions suited to this specific profile, weighted towards the dominant risk and affordable within that budget.`
+Give exactly 5 actions suited to this specific profile, weighted towards the dominant risk and affordable within that budget. Five, not more: a shorter list that gets read beats a longer one that does not.`
 }
 
 /* -------------------------------------------------------------------------- */

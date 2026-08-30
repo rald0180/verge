@@ -120,12 +120,22 @@ than the headline figure.
 
 | Intervention | Range | Measures | Source |
 |---|---|---|---|
-| Plant shade trees | 0.3 – 1.5 °C | air temperature | [npj Urban Sustainability (2025)](https://www.nature.com/articles/s42949-025-00277-x) — 0.8 °C for a 10% canopy increase, 1.5 °C for 30%; and the global meta-analysis of ~0.3 °C per 10% summarised by [WRI](https://www.wri.org/insights/urban-trees-cooling-potential) |
-| Lighten the roof | 1.2 – 3.3 °C | indoor peak temperature | [US EPA, Using Cool Roofs to Reduce Heat Islands](https://www.epa.gov/heatislands/using-cool-roofs-reduce-heat-islands) — maximum indoor temperature in non-air-conditioned homes |
-| Planting on the roof | 0.6 – 3.0 °C | roof surface temperature | [Environmental Research Letters 11:064004 (2016)](https://iopscience.iop.org/article/10.1088/1748-9326/11/6/064004) — under 1 °C at 25% coverage, up to 3 °C at 100%; near-surface air fell only ~0.6 °C |
-| Lighten or shade paving | 0.5 – 4.0 °C | air temperature | [Cool Pavements for the Mitigation of Urban Heat Island: A Global Perspective (IntechOpen, 2025)](https://www.intechopen.com/online-first/1217999) — averaging ~1 °C; the top of the range generally requires active watering |
-| Swap hard surface for planting | 1.1 – 1.3 °C | air temperature | Field measurements over grass coverage report mean air temperature reductions of 1.18–1.26 °C against comparable hard surfaces |
-| Shade walls and windows | 0.5 – 1.9 °C | air temperature | Greenery beside buildings and pavements is reported to reduce ambient air temperature by up to 1.87 °C |
+| Plant shade trees | 0.3 – 1.5 °C | air temperature | [Increasing tree canopy lowers urban air temperature by up to 1.5 °C in heat-prone areas](https://www.nature.com/articles/s42949-025-00277-x), npj Urban Sustainability (2025) — 0.8 °C for a 10% canopy increase, 1.5 °C for 30% |
+| Lighten the roof | 1.2 – 3.3 °C | indoor peak temperature | [US EPA, Using Cool Roofs to Reduce Heat Islands](https://www.epa.gov/heatislands/using-cool-roofs-reduce-heat-islands) — maximum indoor temperature in non-air-conditioned homes. The EPA notes an outdoor effect but publishes no figure, so we quote none |
+| Planting on the roof | 0.6 – 3.0 °C | roof surface temperature | [Environmental Research Letters 11:064004 (2016)](https://iopscience.iop.org/article/10.1088/1748-9326/11/6/064004) — under 1 °C at 25% coverage, ~3 °C at 100%; near-surface air fell only ~0.6 °C |
+| Lighten or shade paving | 0.5 – 3.5 °C | air temperature | [Cool Pavements for the Mitigation of Urban Heat Island: A Global Perspective](https://www.intechopen.com/online-first/1217999) (IntechOpen, 2025) — reflective pavements lower urban-canyon air temperature by 0.5–3.5 °C |
+| Swap hard surface for planting | about 0.9 °C | air temperature | Bowler, Buyung-Ali, Knight & Pullin, [Urban greening to cool towns and cities: a systematic review](https://www.sciencedirect.com/science/article/abs/pii/S0169204610001234), Landscape and Urban Planning 97(3):147–155 (2010) — meta-analysis: a park averaged 0.94 °C cooler by day. A point estimate, not a range, because that is what the review reports |
+
+**Every figure above was re-checked against its source on 30 Aug 2026.** Two
+did not survive. A "swap hard surface for planting" range of 1.18–1.26 °C had
+no attributable source at all, and has been replaced with the Bowler
+systematic review's actual finding. A "shade the walls" entry claiming up to
+1.87 °C likewise had no source, and was removed rather than re-sourced — the
+vertical-greenery literature reports anything from 0.66 °C to 7.14 °C
+depending on the study, and picking a number out of that spread would have
+been invention. Two smaller corrections: the paving range was 0.5–4 °C where
+the chapter says 0.5–3.5 °C, and the cool-roof entry claimed a 0.3 °C outdoor
+effect that the EPA page does not state.
 
 **Two separate uncertainties stack here, and the UI says so.** These ranges were
 measured in other cities under other conditions and are properties of the

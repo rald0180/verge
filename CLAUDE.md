@@ -84,7 +84,7 @@ This is the screen the judges will see first. It carries Design and Technology.
 The risk profile plus a few answers about the dwelling go to Claude, which returns a ranked plan.
 
 * Three quick inputs, nothing more: dwelling type (house, apartment, sharehouse), own or rent, budget band.
-* Claude returns 5 to 7 actions as strict JSON, each with: title, what it does, which risk it reduces, estimated cost in USD, effort in hours, an impact score, and a payback note.
+* Claude returns exactly 5 actions as strict JSON (amended 2026-08-30: was 5 to 7. Seven actions cost about 28% more generated tokens and roughly the same share of the wait, and a list that gets read beats a longer one that does not), each with: title, what it does, which risk it reduces, estimated cost in USD, effort in hours, an impact score, and a payback note.
 * Actions are ranked by impact with a bounded penalty for cost, and rendered as cards. (Amended 2026-08-29, Phase 5: a literal impact-per-dollar ratio was degenerate — dividing by cost made cost the only variable, so a $0 admin task outranked ceiling insulation 200 to 1 and the two most effective actions sorted last. The penalty is now capped at 15 points, so impact stays dominant. Reasoning in api/plan.ts.) Renters get renter-legal actions only. This detail matters and judges notice it.
 * The whole plan exports to a single-page PDF. This is what makes it feel like a real product rather than a demo.
 
