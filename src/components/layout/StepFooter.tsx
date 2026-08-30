@@ -51,12 +51,6 @@ export function StepFooter({
         ) : null}
       </div>
 
-      {onRestart ? (
-        <p className="text-xs text-zinc-500">
-          Restarting clears the address, the plan and the photo.
-        </p>
-      ) : null}
-
       {nextBlockedReason ? (
         <p className="text-xs text-zinc-500">{nextBlockedReason}</p>
       ) : null}

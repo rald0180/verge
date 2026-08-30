@@ -1084,3 +1084,33 @@ says what will be cleared instead.
 App.tsx ran with default options and rewrote the file to semicolons and double
 quotes — 58 semicolons and 29 double-quoted imports, in the only file in the
 repo written that way. Reformatted to the house style the other files use.
+
+---
+
+## 2026-08-30 — The header was never moving; it was see-through
+
+Asked to stop the header moving with the page, and to drop the Restart caption.
+
+**Measured before changing anything, and the reported symptom was not the
+cause.** Instrumenting the page at three scroll positions, `header.top` stayed
+at 0 the whole way down, `position` computed to `sticky`, and no ancestor
+carried an `overflow`, `transform`, `filter` or `contain` value that could
+break sticky positioning. It was pinned correctly.
+
+The real problem was `bg-canvas/80` with an 8 px backdrop blur. At 80% opacity
+the page scrolls *through* the header: a screenshot taken mid-scroll shows the
+address line ghosting behind the "verge" wordmark. Content visibly sliding
+through a bar is indistinguishable from the bar sliding with the content, which
+is exactly what it looked like. The background was doing the lying.
+
+Fixed by making it opaque and dropping the blur — blurring an opaque surface
+does nothing but cost a compositing layer. Verified after: solid
+`rgb(10, 15, 13)`, `backdrop-filter: none`, `top` still 0 at scroll 700, and
+the mid-scroll screenshot now cuts content off cleanly at the border.
+
+Worth recording because the fix for the symptom as described — making an
+already-sticky header sticky — would have changed nothing and left the actual
+problem in place.
+
+**Caption removed** from under the Restart button. It was the last of the
+explanatory copy; the button's label carries it.
