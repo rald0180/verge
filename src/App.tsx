@@ -1,41 +1,41 @@
-import { useEffect } from "react";
-import { ImagePlus, MapPin } from "lucide-react";
+import { useCallback, useEffect } from 'react'
+import { ImagePlus, MapPin } from 'lucide-react'
 
-import { AddressSearch } from "./components/lens/AddressSearch";
-import { AppShell } from "./components/layout/AppShell";
-import { Badge } from "./components/ui/Badge";
-import { Button } from "./components/ui/Button";
-import { Card } from "./components/ui/Card";
-import { CoolingScore } from "./components/audit/CoolingScore";
-import { DIMENSION_META } from "./lib/format";
-import { DwellingForm } from "./components/planner/DwellingForm";
-import { ErrorState } from "./components/ui/ErrorState";
-import { Interventions } from "./components/audit/Interventions";
-import { PhotoDrop } from "./components/audit/PhotoDrop";
-import { PlanList } from "./components/planner/PlanList";
-import { RiskGrid } from "./components/lens/RiskGrid";
-import { SectionHeading } from "./components/layout/SectionHeading";
-import { Skeleton } from "./components/ui/Skeleton";
-import { StepFooter } from "./components/layout/StepFooter";
-import { StepNav } from "./components/layout/StepNav";
-import { StepPage } from "./components/layout/StepPage";
-import { SummaryPage } from "./components/summary/SummaryPage";
-import { SurfaceOverlay } from "./components/audit/SurfaceOverlay";
-import { TrendChart } from "./components/lens/TrendChart";
-import { useRiskProfile } from "./hooks/useRiskProfile";
-import { usePlan } from "./hooks/usePlan";
-import { useStep } from "./hooks/useStep";
-import { useStreetAudit } from "./hooks/useStreetAudit";
-import type { GeocodeResult, RiskProfile } from "./lib/types";
-import type { Step } from "./hooks/useStep";
+import { AddressSearch } from './components/lens/AddressSearch'
+import { AppShell } from './components/layout/AppShell'
+import { Badge } from './components/ui/Badge'
+import { Button } from './components/ui/Button'
+import { Card } from './components/ui/Card'
+import { CoolingScore } from './components/audit/CoolingScore'
+import { DIMENSION_META } from './lib/format'
+import { DwellingForm } from './components/planner/DwellingForm'
+import { ErrorState } from './components/ui/ErrorState'
+import { Interventions } from './components/audit/Interventions'
+import { PhotoDrop } from './components/audit/PhotoDrop'
+import { PlanList } from './components/planner/PlanList'
+import { RiskGrid } from './components/lens/RiskGrid'
+import { SectionHeading } from './components/layout/SectionHeading'
+import { Skeleton } from './components/ui/Skeleton'
+import { StepFooter } from './components/layout/StepFooter'
+import { StepNav } from './components/layout/StepNav'
+import { StepPage } from './components/layout/StepPage'
+import { SummaryPage } from './components/summary/SummaryPage'
+import { SurfaceOverlay } from './components/audit/SurfaceOverlay'
+import { TrendChart } from './components/lens/TrendChart'
+import { useRiskProfile } from './hooks/useRiskProfile'
+import { usePlan } from './hooks/usePlan'
+import { useStep } from './hooks/useStep'
+import { useStreetAudit } from './hooks/useStreetAudit'
+import type { GeocodeResult, RiskProfile } from './lib/types'
+import type { Step } from './hooks/useStep'
 
 /** Hoisted so their identity is stable across renders — see the guard effect. */
-const ALL_STEPS: readonly Step[] = ["lens", "plan", "audit", "summary"];
-const LENS_ONLY: readonly Step[] = ["lens"];
+const ALL_STEPS: readonly Step[] = ['lens', 'plan', 'audit', 'summary']
+const LENS_ONLY: readonly Step[] = ['lens']
 
 interface PlaceCardProps {
-  readonly place: GeocodeResult;
-  readonly profile?: RiskProfile;
+  readonly place: GeocodeResult
+  readonly profile?: RiskProfile
 }
 
 /**
@@ -53,76 +53,66 @@ function PlaceCard({ place, profile }: PlaceCardProps) {
             <MapPin className="h-4 w-4 text-accent" aria-hidden="true" />
           </span>
           <div className="min-w-0 space-y-1">
-            <p className="text-sm font-medium text-zinc-100">
-              {place.shortName}
-            </p>
+            <p className="text-sm font-medium text-zinc-100">{place.shortName}</p>
             <p className="text-sm text-zinc-400">{place.displayName}</p>
             <p className="text-xs text-zinc-500">
-              {place.coordinates.latitude.toFixed(4)},{" "}
-              {place.coordinates.longitude.toFixed(4)}
+              {place.coordinates.latitude.toFixed(4)}, {place.coordinates.longitude.toFixed(4)}
             </p>
           </div>
         </div>
 
         {profile ? (
           <div className="shrink-0 space-y-2">
-            <p className="text-xs uppercase tracking-widest text-zinc-500">
-              Overall risk
-            </p>
+            <p className="text-xs uppercase tracking-widest text-zinc-500">Overall risk</p>
             <Badge score={profile.composite} />
             <p className="mx-auto max-w-xs text-sm text-zinc-400">
-              Scored {profile.composite} of 100 across four dimensions, weighted
-              equally. The biggest driver here is{" "}
-              {DIMENSION_META[profile.dominant].label.toLowerCase()}.
+              Scored {profile.composite} of 100 across four dimensions, weighted equally. The
+              biggest driver here is {DIMENSION_META[profile.dominant].label.toLowerCase()}.
             </p>
           </div>
         ) : null}
       </div>
     </Card>
-  );
+  )
 }
 
 export default function App() {
-  const lens = useRiskProfile();
-  const planner = usePlan();
-  const audit = useStreetAudit();
-  const { step, go } = useStep();
+  const lens = useRiskProfile()
+  const planner = usePlan()
+  const audit = useStreetAudit()
+  const { step, go } = useStep()
 
-  const lensState = lens.state;
-  const busy =
-    lensState.status === "locating" || lensState.status === "loading";
-  const lensError = lensState.status === "error" ? lensState.error : undefined;
-  const profile = lensState.status === "ready" ? lensState.profile : undefined;
+  const lensState = lens.state
+  const busy = lensState.status === 'locating' || lensState.status === 'loading'
+  const lensError = lensState.status === 'error' ? lensState.error : undefined
+  const profile = lensState.status === 'ready' ? lensState.profile : undefined
 
   const place =
-    lensState.status === "loading"
+    lensState.status === 'loading'
       ? lensState.place
-      : lensState.status === "ready"
+      : lensState.status === 'ready'
         ? lensState.profile.place
-        : undefined;
+        : undefined
 
-  const plan =
-    planner.state.status === "ready" ? planner.state.plan : undefined;
-  const auditResult =
-    audit.state.status === "ready" ? audit.state.audit : undefined;
-  const auditPreview =
-    audit.state.status === "ready" ? audit.state.previewUrl : undefined;
+  const plan = planner.state.status === 'ready' ? planner.state.plan : undefined
+  const auditResult = audit.state.status === 'ready' ? audit.state.audit : undefined
+  const auditPreview = audit.state.status === 'ready' ? audit.state.previewUrl : undefined
 
   /**
    * Everything after the first step needs a risk profile, because the plan and
    * the summary are both about one specific coordinate.
    */
-  const hasProfile = profile !== undefined;
-  const unlocked: readonly Step[] = hasProfile ? ALL_STEPS : LENS_ONLY;
+  const hasProfile = profile !== undefined
+  const unlocked: readonly Step[] = hasProfile ? ALL_STEPS : LENS_ONLY
 
   /**
    * What has actually been produced, as opposed to what has been walked past.
    * Both middle steps are skippable, so this is built from real results.
    */
-  const completed: Step[] = [];
-  if (hasProfile) completed.push("lens");
-  if (plan) completed.push("plan");
-  if (auditResult) completed.push("audit");
+  const completed: Step[] = []
+  if (hasProfile) completed.push('lens')
+  if (plan) completed.push('plan')
+  if (auditResult) completed.push('audit')
 
   /**
    * Guard against arriving at a locked step directly — a bookmarked #summary,
@@ -134,27 +124,39 @@ export default function App() {
    * identity on every render, which would run this effect on every render.
    */
   useEffect(() => {
-    if (!hasProfile && step !== "lens") go("lens");
-  }, [step, hasProfile, go]);
+    if (!hasProfile && step !== 'lens') go('lens')
+  }, [step, hasProfile, go])
+
+  /**
+   * Clear every answer and go back to the beginning.
+   *
+   * All three hooks are reset, not just the risk profile: the plan is about one
+   * coordinate, and the audit holds an object URL that its own reset revokes, so
+   * dropping only the address would leave a stale plan behind and leak the blob.
+   *
+   * The address field empties itself — the lens step is unmounted while the
+   * summary is showing, so it remounts with fresh state.
+   */
+  const restart = useCallback(() => {
+    lens.reset()
+    planner.reset()
+    audit.reset()
+    go('lens')
+  }, [lens, planner, audit, go])
 
   return (
     <AppShell>
-      <StepNav
-        current={step}
-        unlocked={unlocked}
-        completed={completed}
-        onGo={go}
-      />
+      <StepNav current={step} unlocked={unlocked} completed={completed} onGo={go} />
 
-      {step === "lens" ? (
+      {step === 'lens' ? (
         <StepPage stepKey="lens">
           <section className="space-y-4 pt-2">
             <h1 className="text-3xl font-semibold tracking-tight text-zinc-100 md:text-5xl">
               Climate adaptation that starts at your front door
             </h1>
             <p className="mx-auto max-w-2xl text-sm text-accent-text">
-              Climate reports tell you the planet is in trouble. Verge tells you
-              what to do about your house.
+              Climate reports tell you the planet is in trouble. Verge tells you what to do about
+              your house.
             </p>
           </section>
 
@@ -165,23 +167,19 @@ export default function App() {
               <AddressSearch
                 onSearch={(query) => {
                   // A plan is about one risk profile. A new address invalidates it.
-                  planner.reset();
-                  void lens.load(query);
+                  planner.reset()
+                  void lens.load(query)
                 }}
                 loading={busy}
                 {...(lensError ? { error: lensError.message } : {})}
               />
             </Card>
 
-            {place ? (
-              <PlaceCard place={place} {...(profile ? { profile } : {})} />
-            ) : null}
+            {place ? <PlaceCard place={place} {...(profile ? { profile } : {})} /> : null}
 
             <RiskGrid
               loading={busy}
-              {...(profile
-                ? { scores: profile.scores, dominant: profile.dominant }
-                : {})}
+              {...(profile ? { scores: profile.scores, dominant: profile.dominant } : {})}
               {...(lensError ? { error: lensError } : {})}
               onRetry={() => void lens.retry()}
             />
@@ -201,57 +199,47 @@ export default function App() {
             )}
 
             <StepFooter
-              onNext={() => go("plan")}
+              onNext={() => go('plan')}
               nextLabel="Build a plan"
-              {...(profile
-                ? {}
-                : { nextBlockedReason: "Check an address to continue." })}
+              {...(profile ? {} : { nextBlockedReason: 'Check an address to continue.' })}
             />
           </section>
         </StepPage>
       ) : null}
 
-      {step === "plan" ? (
+      {step === 'plan' ? (
         <StepPage stepKey="plan">
           <section className="space-y-8">
-            <SectionHeading
-              eyebrow="What to do about it"
-              title="Adaptation Planner"
-            />
+            <SectionHeading eyebrow="What to do about it" title="Adaptation Planner" />
 
             <DwellingForm
               disabled={!profile}
-              loading={planner.state.status === "loading"}
+              loading={planner.state.status === 'loading'}
               onSubmit={(dwelling) => {
-                if (profile) void planner.build(profile, dwelling);
+                if (profile) void planner.build(profile, dwelling)
               }}
             />
 
             <PlanList
-              loading={planner.state.status === "loading"}
+              loading={planner.state.status === 'loading'}
               {...(plan ? { plan } : {})}
-              {...(planner.state.status === "error"
-                ? { error: planner.state.error }
-                : {})}
+              {...(planner.state.status === 'error' ? { error: planner.state.error } : {})}
               onRetry={() => void planner.retry()}
             />
 
             <StepFooter
-              onBack={() => go("lens")}
-              onNext={() => go("audit")}
+              onBack={() => go('lens')}
+              onNext={() => go('audit')}
               nextLabel="Audit my street"
             />
           </section>
         </StepPage>
       ) : null}
 
-      {step === "audit" ? (
+      {step === 'audit' ? (
         <StepPage stepKey="audit">
           <section className="space-y-8">
-            <SectionHeading
-              eyebrow="What your street is made of"
-              title="Street Audit"
-            />
+            <SectionHeading eyebrow="What your street is made of" title="Street Audit" />
 
             {/*
             The drop zone stays mounted on error, not just when idle. It used to
@@ -264,29 +252,22 @@ export default function App() {
             the file is not retained in state, so even a network error needs the
             photo choosing again. One affordance covers every case.
           */}
-            {audit.state.status === "error" ? (
-              <ErrorState
-                error={audit.state.error}
-                title="Could not audit that photo"
-              />
+            {audit.state.status === 'error' ? (
+              <ErrorState error={audit.state.error} title="Could not audit that photo" />
             ) : null}
 
-            {audit.state.status === "idle" || audit.state.status === "error" ? (
-              <PhotoDrop
-                onSelect={(file, previewUrl) =>
-                  void audit.analyse(file, previewUrl)
-                }
-              />
+            {audit.state.status === 'idle' || audit.state.status === 'error' ? (
+              <PhotoDrop onSelect={(file, previewUrl) => void audit.analyse(file, previewUrl)} />
             ) : null}
 
-            {audit.state.status === "analysing" ? (
+            {audit.state.status === 'analysing' ? (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <Skeleton className="h-64 w-full" />
                 <Skeleton className="h-64 w-full" />
               </div>
             ) : null}
 
-            {audit.state.status === "ready" ? (
+            {audit.state.status === 'ready' ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <SurfaceOverlay
@@ -295,9 +276,7 @@ export default function App() {
                   />
                   <div className="space-y-4">
                     <CoolingScore audit={audit.state.audit} />
-                    <Interventions
-                      interventions={audit.state.audit.interventions}
-                    />
+                    <Interventions interventions={audit.state.audit.interventions} />
                   </div>
                 </div>
 
@@ -311,21 +290,18 @@ export default function App() {
             ) : null}
 
             <StepFooter
-              onBack={() => go("plan")}
-              onNext={() => go("summary")}
+              onBack={() => go('plan')}
+              onNext={() => go('summary')}
               nextLabel="See the summary"
             />
           </section>
         </StepPage>
       ) : null}
 
-      {step === "summary" && profile ? (
+      {step === 'summary' && profile ? (
         <StepPage stepKey="summary">
           <section className="space-y-8">
-            <SectionHeading
-              eyebrow="Everything together"
-              title="Your summary"
-            />
+            <SectionHeading eyebrow="Everything together" title="Your summary" />
 
             <SummaryPage
               profile={profile}
@@ -335,10 +311,10 @@ export default function App() {
               onGoTo={go}
             />
 
-            <StepFooter onBack={() => go("audit")} />
+            <StepFooter onBack={() => go('audit')} onRestart={restart} />
           </section>
         </StepPage>
       ) : null}
     </AppShell>
-  );
+  )
 }

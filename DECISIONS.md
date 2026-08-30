@@ -1054,3 +1054,33 @@ All five are now coalesced at the read site, with a test.
   $500-2,500, over $2,500.
 - Header shortened from about 88 px to 61 px — vertical padding 20 px to 12 px
   and the mark from 48 px to 36 px.
+
+---
+
+## 2026-08-30 — Restart on the summary
+
+A Restart button beside Back on the final page, clearing every answer and
+returning to step one.
+
+**It resets all three hooks, not just the address.** Dropping only the risk
+profile would leave a plan built for the previous coordinate sitting in state,
+ready to reappear the moment a new address resolved, and would leak the audit's
+object URL — `useStreetAudit.reset` is what revokes it. The address field needs
+no clearing of its own: the lens step is unmounted while the summary is
+showing, so it remounts with fresh state.
+
+Verified rather than assumed. After a restart: the URL returns to `#lens`, the
+address field is empty, three of the four rail steps are disabled again, the
+step-one gate reappears, the old dials are gone, and forcing `#summary` back
+into the address bar bounces to `#lens` instead of rendering a summary of
+nothing.
+
+**No confirmation dialog.** It discards a plan that cost an API call, so there
+is a case for one, but the project has no modal primitive and adding one is
+scope CLAUDE.md section 2 does not allow. A one-line caption under the button
+says what will be cleared instead.
+
+**Fixed a formatting mistake of my own.** An earlier `prettier --write` on
+App.tsx ran with default options and rewrote the file to semicolons and double
+quotes — 58 semicolons and 29 double-quoted imports, in the only file in the
+repo written that way. Reformatted to the house style the other files use.
