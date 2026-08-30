@@ -183,7 +183,7 @@ export type Tenure = 'own' | 'rent'
  * are the tiers a US household actually shops in: supplies, a weekend project,
  * a significant purchase, and work that needs a contractor.
  */
-export type BudgetBand = 'under-150' | '150-600' | '600-2500' | 'over-2500'
+export type BudgetBand = 'under-100' | '100-500' | '500-2500' | 'over-2500'
 
 export interface DwellingProfile {
   readonly type: DwellingType
@@ -346,6 +346,16 @@ export interface AirQualityResponse {
     readonly pm10: number | null
     readonly ozone: number | null
     readonly european_aqi: number | null
+    /**
+     * The same air on the US scale.
+     *
+     * Fetched purely so the disclosure can show both. The two indices disagree
+     * sharply — CAMS output for Sydney on 30 Aug 2026 was European AQI 62 and
+     * US AQI 86 from one set of concentrations — and someone comparing our
+     * number against a US-scale app has no way to know that without seeing them
+     * side by side.
+     */
+    readonly us_aqi: number | null
   }
 }
 

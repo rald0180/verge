@@ -59,13 +59,13 @@ const MODEL = 'claude-opus-5'
 const DIMENSIONS: readonly RiskDimension[] = ['heat', 'flood', 'air', 'dryfire']
 const DWELLING_TYPES: readonly string[] = ['house', 'apartment', 'sharehouse']
 const TENURES: readonly string[] = ['own', 'rent']
-const BUDGETS: readonly string[] = ['under-150', '150-600', '600-2500', 'over-2500']
+const BUDGETS: readonly string[] = ['under-100', '100-500', '500-2500', 'over-2500']
 
 const BUDGET_GUIDANCE: Readonly<Record<BudgetBand, string>> = {
-  'under-150': 'under about $150 USD in total, so supplies rather than trades',
-  '150-600': 'roughly $150 to $600 USD in total, a weekend project',
-  '600-2500':
-    'roughly $600 to $2,500 USD in total, a significant purchase or a small contractor job',
+  'under-100': 'under about $100 USD in total, so supplies rather than trades',
+  '100-500': 'roughly $100 to $500 USD in total, a weekend project',
+  '500-2500':
+    'roughly $500 to $2,500 USD in total, a significant purchase or a small contractor job',
   'over-2500': 'more than $2,500 USD, so contractor work and larger installations are in scope',
 }
 

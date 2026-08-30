@@ -994,3 +994,63 @@ directly: `600-2500` returns 200, and the retired `500-2000` returns a typed
 400 rather than a crash or a silently empty plan.
 
 Header lockup tightened again, 8 px to 4 px between the mark and the wordmark.
+
+---
+
+## 2026-08-30 — Chasing down an air quality number that looked wrong
+
+Asked why 47 Missenden Rd, Camperdown reads 62 when Google shows 30-40.
+
+**Our number is right, and it is not the same number Google is showing.** The
+dial reports the European AQI verbatim, and CAMS returns exactly 62 for that
+coordinate. The same call also returns **US AQI 86** from the same
+concentrations. One set of air, two indices, twenty-four points apart — because
+the scales are constructed differently, not because either is wrong. On the
+European scale 62 is "poor"; the US scale calls the identical air "moderate".
+
+**A hypothesis that turned out to be wrong, recorded because it was the
+obvious one.** Local indices usually publish a 24-hour rolling average while we
+report the current hour, so the natural guess was that we were catching an
+evening peak. Checked it: current hour PM2.5 was 18 µg/m³ and the 24-hour mean
+was **28.2**, peaking at 43.4 that morning. Averaging would have made our
+number worse, not better. The guess was backwards.
+
+What is left is the real explanation, and it is the one already printed on the
+dial: **CAMS is a model, not a sensor.** It is a regional atmospheric forecast,
+and Google blends government monitoring stations. A model and a monitor
+disagreeing by this much over a city is ordinary.
+
+### A claim of our own that did not survive the check
+
+The disclosure said the reading came from a **"45 km grid cell"**. Testing five
+coordinates around Sydney, the service snaps to a 0.1° grid — coordinates 7 km
+apart returned an identical cell, and the returned centres were all 0.1°
+multiples. 45 km is not something we can stand behind from the evidence we
+have, and asserting a specific resolution we have not verified is exactly the
+fabricated-figure problem in CLAUDE.md section 5. It now says what was actually
+observed: a regional forecast served on a 0.1° grid, not a sensor, so it will
+differ from nearby monitoring stations.
+
+### What changed as a result
+
+The US AQI is now fetched and shown in the disclosure beside the European one,
+labelled as the same reading rather than a second measurement. Someone
+comparing our number against a US-scale app can now see why the two differ
+without having to ask.
+
+### A latent bug found on the way
+
+`isAirQualityResponse` validates with `current.pm2_5 ?? null`, which accepts a
+field that is **absent** as readily as one that is null. The value then arrives
+as `undefined`, sails through the `!== null` guards inside `airScore`, and
+reaches `Math.round(undefined)` — painting **NaN** on the dial under a
+correctly coloured arc. Nobody had hit it because Open-Meteo always sends the
+fields, but adding a fifth field was the moment to fix it rather than widen it.
+All five are now coalesced at the read site, with a test.
+
+### Also
+
+- Budget bands set to the intervals asked for: under $100, $100-500,
+  $500-2,500, over $2,500.
+- Header shortened from about 88 px to 61 px — vertical padding 20 px to 12 px
+  and the mark from 48 px to 36 px.

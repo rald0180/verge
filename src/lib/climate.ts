@@ -180,7 +180,8 @@ function isAirQualityResponse(value: unknown): value is AirQualityResponse {
     isNumberOrNull(current.pm2_5 ?? null) &&
     isNumberOrNull(current.pm10 ?? null) &&
     isNumberOrNull(current.ozone ?? null) &&
-    isNumberOrNull(current.european_aqi ?? null)
+    isNumberOrNull(current.european_aqi ?? null) &&
+    isNumberOrNull(current.us_aqi ?? null)
   )
 }
 
@@ -192,7 +193,7 @@ export async function fetchAirQuality(
   const url = new URL(AIR_QUALITY_URL)
   url.searchParams.set('latitude', coordinates.latitude.toFixed(5))
   url.searchParams.set('longitude', coordinates.longitude.toFixed(5))
-  url.searchParams.set('current', 'pm2_5,pm10,ozone,european_aqi')
+  url.searchParams.set('current', 'pm2_5,pm10,ozone,european_aqi,us_aqi')
   return getJson(url, isAirQualityResponse, 'air quality', signal)
 }
 

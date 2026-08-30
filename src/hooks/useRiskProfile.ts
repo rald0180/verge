@@ -251,10 +251,17 @@ export function useRiskProfile(): UseRiskProfile {
 
     const airCurrent = air.data.current
     const airResult = airScore({
-      europeanAqi: airCurrent.european_aqi,
-      pm25: airCurrent.pm2_5,
-      pm10: airCurrent.pm10,
-      ozone: airCurrent.ozone,
+      // Coalesced rather than passed straight through: the response guard in
+      // climate.ts accepts an ABSENT field as well as a null one, so a provider
+      // that simply omits a pollutant leaves `undefined` here. That clears the
+      // `!== null` checks inside airScore and reaches Math.round(undefined),
+      // painting NaN on the dial. Null is the only "we do not have this" value
+      // the scoring understands.
+      europeanAqi: airCurrent.european_aqi ?? null,
+      usAqi: airCurrent.us_aqi ?? null,
+      pm25: airCurrent.pm2_5 ?? null,
+      pm10: airCurrent.pm10 ?? null,
+      ozone: airCurrent.ozone ?? null,
     })
 
     /* ------------------------------------------------------------- dryfire */

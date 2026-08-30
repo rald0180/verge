@@ -56,8 +56,8 @@ function VergeMark({ className }: { readonly className?: string }) {
 export function Header() {
   return (
     <header className="sticky top-0 z-10 border-b border-white/10 bg-canvas/80 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-center gap-1 px-6 py-5 md:px-8">
-        <VergeMark className="h-12 w-12 shrink-0 text-accent" />
+      <div className="mx-auto flex max-w-5xl items-center justify-center gap-1 px-6 py-3 md:px-8">
+        <VergeMark className="h-9 w-9 shrink-0 text-accent" />
 
         <p className="text-3xl font-bold lowercase leading-none tracking-tight text-zinc-100">
           verge

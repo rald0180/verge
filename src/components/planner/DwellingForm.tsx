@@ -13,7 +13,7 @@ interface DwellingFormProps {
 
 const DWELLING_TYPES: readonly DwellingType[] = ['house', 'apartment', 'sharehouse']
 const TENURES: readonly Tenure[] = ['own', 'rent']
-const BUDGETS: readonly BudgetBand[] = ['under-150', '150-600', '600-2500', 'over-2500']
+const BUDGETS: readonly BudgetBand[] = ['under-100', '100-500', '500-2500', 'over-2500']
 
 interface ChoiceRowProps<T extends string> {
   readonly label: string
@@ -70,7 +70,7 @@ export function DwellingForm({
 }: DwellingFormProps) {
   const [type, setType] = useState<DwellingType>('house')
   const [tenure, setTenure] = useState<Tenure>('own')
-  const [budget, setBudget] = useState<BudgetBand>('150-600')
+  const [budget, setBudget] = useState<BudgetBand>('100-500')
 
   return (
     <Card>

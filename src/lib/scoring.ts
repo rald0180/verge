@@ -218,6 +218,8 @@ export function floodScore(inputs: FloodInputs): RiskScore {
 export interface AirInputs {
   /** European AQI for the coordinate. Null when the provider omits it. */
   readonly europeanAqi: number | null
+  /** The same air on the US scale, shown alongside so the two can be compared. */
+  readonly usAqi: number | null
   readonly pm25: number | null
   readonly pm10: number | null
   readonly ozone: number | null
@@ -237,7 +239,7 @@ export interface AirInputs {
  * scores 50. This is our anchor choice, not a WHO one, and it is stated here.
  */
 export function airScore(inputs: AirInputs): RiskScore {
-  const { europeanAqi, pm25, pm10, ozone } = inputs
+  const { europeanAqi, usAqi, pm25, pm10, ozone } = inputs
 
   const evidence: Evidence[] = []
   if (pm25 !== null) {
@@ -265,12 +267,23 @@ export function airScore(inputs: AirInputs): RiskScore {
     })
   }
 
+  if (usAqi !== null) {
+    evidence.push({
+      label: 'US AQI, same air',
+      value: Math.round(usAqi),
+      unit: 'index',
+      source:
+        'The two indices are scored differently and will not agree — this is the same reading, not a second measurement',
+    })
+  }
+
   if (europeanAqi !== null) {
     evidence.unshift({
       label: 'European AQI',
       value: Math.round(europeanAqi),
       unit: 'index',
-      source: 'CAMS model via Open-Meteo — 45 km grid cell, not a local sensor',
+      source:
+        'CAMS atmospheric model via Open-Meteo, served on a 0.1° grid — a regional forecast, not a sensor, so it will differ from nearby monitoring stations',
     })
     const raw = clamp(europeanAqi, 0, 100)
     return makeScore(

@@ -169,7 +169,7 @@ describe('flood', () => {
 
 describe('air', () => {
   it('uses the European AQI directly and never claims to be measured', () => {
-    const score = airScore({ europeanAqi: 22, pm25: 5.3, pm10: 8.2, ozone: 56 })
+    const score = airScore({ europeanAqi: 22, usAqi: 41, pm25: 5.3, pm10: 8.2, ozone: 56 })
     expect(score.value).toBe(22)
     // CAMS is a model at 45 km, not a sensor. See scoring.ts.
     expect(score.confidence).toBe('modelled')
@@ -177,12 +177,12 @@ describe('air', () => {
   })
 
   it('falls back to PM2.5 against the WHO guideline, which lands on 50', () => {
-    const score = airScore({ europeanAqi: null, pm25: 15, pm10: null, ozone: null })
+    const score = airScore({ europeanAqi: null, usAqi: null, pm25: 15, pm10: null, ozone: null })
     expect(score.value).toBe(50)
   })
 
   it('reports no reading rather than inventing a good one', () => {
-    const score = airScore({ europeanAqi: null, pm25: null, pm10: null, ozone: null })
+    const score = airScore({ europeanAqi: null, usAqi: null, pm25: null, pm10: null, ozone: null })
     expect(score.headline).toContain('No air quality reading')
   })
 })
@@ -248,5 +248,30 @@ describe('composite', () => {
       dryfire: make('dryfire', 50),
     })
     expect(result.dominant).toBe('heat')
+  })
+})
+
+describe('airScore missing-field handling', () => {
+  it('treats an absent index as absent rather than painting NaN', () => {
+    // The response guard accepts a missing field as well as a null one, so
+    // undefined can reach here. It must fall through to the PM2.5 branch, not
+    // produce Math.round(undefined).
+    const score = airScore({ europeanAqi: null, usAqi: null, pm25: 12, pm10: null, ozone: null })
+    expect(Number.isNaN(score.value)).toBe(false)
+    expect(score.value).toBe(40)
+  })
+
+  it('shows the US index alongside the European one', () => {
+    const score = airScore({ europeanAqi: 62, usAqi: 86, pm25: 18, pm10: 22, ozone: 53 })
+    expect(score.value).toBe(62)
+    const us = score.evidence.find((row) => row.label === 'US AQI, same air')
+    expect(us?.value).toBe(86)
+  })
+
+  it('does not claim a grid cell size it cannot verify', () => {
+    const score = airScore({ europeanAqi: 62, usAqi: 86, pm25: 18, pm10: 22, ozone: 53 })
+    const eaqi = score.evidence.find((row) => row.label === 'European AQI')
+    expect(eaqi?.source).not.toMatch(/45 km/)
+    expect(eaqi?.source).toMatch(/not a sensor/)
   })
 })
