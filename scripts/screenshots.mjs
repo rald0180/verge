@@ -1,8 +1,19 @@
+import { existsSync } from 'node:fs'
 import { chromium } from 'playwright'
 
 const BASE = 'http://localhost:3000'
 const OUT = 'docs/screenshots'
 const ADDRESS = 'Rokeby Rd, Subiaco WA'
+
+/**
+ * A photograph for the Street Audit shot.
+ *
+ * `test-photos/` is gitignored, so this is present on a developer's machine and
+ * absent in a clean clone. The audit screenshot is skipped rather than faked
+ * when it is missing — and it must be a photo whose licence allows publishing,
+ * since the screenshot goes into a public README.
+ */
+const AUDIT_PHOTO = 'test-photos/street-1-2940px.png'
 
 const setInput = async (page, value) => {
   await page.evaluate((v) => {
@@ -19,11 +30,26 @@ const setInput = async (page, value) => {
   })
 }
 
+const pause = (ms) => new Promise((r) => setTimeout(r, ms))
+
+/** Step one: resolve an address and wait for the dials to render. */
 const search = async (page, address) => {
   await setInput(page, address)
   await page.getByRole('button', { name: /Check/ }).click()
   await page.waitForSelector('svg[viewBox="0 0 100 100"]', { timeout: 90000 })
-  await new Promise((r) => setTimeout(r, 2500))
+  await pause(2500)
+}
+
+/** Step two: walk to the planner and build a plan. */
+const buildPlan = async (page) => {
+  await page.getByRole('button', { name: /Build a plan/ }).click()
+  await pause(800)
+  await page.getByRole('button', { name: 'House', exact: true }).click()
+  await page.getByRole('button', { name: 'I own it', exact: true }).click()
+  await page.getByRole('button', { name: '$100 – $500', exact: true }).click()
+  await page.getByRole('button', { name: 'Build my plan', exact: true }).click()
+  await page.waitForSelector('text=/Save as PDF/', { timeout: 150000 })
+  await pause(1500)
 }
 
 const run = async (name, width, height, fn) => {
@@ -31,11 +57,7 @@ const run = async (name, width, height, fn) => {
   const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 2 })
   await page.goto(BASE, { waitUntil: 'networkidle' })
   await fn(page)
-  // A full-page capture renders `position: sticky` at its scrolled offset, so
-  // the header appears again halfway down the image and reads as a bug. Pin it
-  // to the top for the shot only.
-  await page.addStyleTag({ content: 'header { position: static !important; }' })
-  await new Promise((r) => setTimeout(r, 300))
+  await pause(300)
   await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: true })
   await browser.close()
   console.log(`  ${OUT}/${name}.png  (${width}x${height})`)
@@ -43,7 +65,7 @@ const run = async (name, width, height, fn) => {
 
 // 1. Landing, desktop
 await run('01-landing-desktop', 1440, 900, async () => {
-  await new Promise((r) => setTimeout(r, 1200))
+  await pause(1200)
 })
 
 // 2. Risk Lens populated, desktop
@@ -54,29 +76,36 @@ await run('02-risk-lens-desktop', 1440, 1100, async (page) => {
 // 3. Full plan, desktop
 await run('03-plan-desktop', 1440, 1100, async (page) => {
   await search(page, ADDRESS)
-  const build = page.getByRole('button', { name: /Build my plan/ })
-  await build.click()
-  await page.waitForSelector('text=/Save as PDF/', { timeout: 90000 })
-  await new Promise((r) => setTimeout(r, 1500))
+  await buildPlan(page)
 })
 
-// 4. Street audit, desktop
-await run('04-street-audit-desktop', 1440, 1100, async (page) => {
-  await page.evaluate(async () => {
-    const zone = [...document.querySelectorAll('div')]
-      .filter((d) => d.className && d.className.includes('transition-colors') && d.className.includes('text-center'))
-      .pop()
-    const r = await fetch('/__audit-test.png')
-    const blob = await r.blob()
-    const dt = new DataTransfer()
-    dt.items.add(new File([blob], 'street.png', { type: 'image/png' }))
-    zone.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt }))
+// 4. Street audit, desktop — only when a publishable photo is available.
+if (existsSync(AUDIT_PHOTO)) {
+  await run('04-street-audit-desktop', 1440, 1100, async (page) => {
+    await search(page, ADDRESS)
+    await page.getByRole('button', { name: /Build a plan/ }).click()
+    await pause(600)
+    await page.getByRole('button', { name: /Audit my street/ }).click()
+    await pause(600)
+    await page.setInputFiles('input[type=file]', AUDIT_PHOTO)
+    await page.waitForSelector('text=/Cooling score/', { timeout: 150000 })
+    await pause(1500)
   })
-  await page.waitForSelector('text=/Cooling score/', { timeout: 90000 })
-  await new Promise((r) => setTimeout(r, 1500))
+} else {
+  console.log(`  skipped 04-street-audit-desktop — no photo at ${AUDIT_PHOTO}`)
+}
+
+// 5. Summary, desktop — the fourth page, with a real plan on it
+await run('06-summary-desktop', 1440, 1100, async (page) => {
+  await search(page, ADDRESS)
+  await buildPlan(page)
+  await page.evaluate(() => {
+    window.location.hash = 'summary'
+  })
+  await pause(1800)
 })
 
-// 5. Mobile, risk lens
+// 6. Mobile, risk lens
 await run('05-risk-lens-mobile', 390, 844, async (page) => {
   await search(page, ADDRESS)
 })

@@ -52,14 +52,20 @@ drought and fire weather. Each dial carries a plain-language verdict and will
 show you exactly where its numbers came from.
 
 **Adaptation Planner.** Three questions — what you live in, whether you own it,
-what you can spend — and Claude returns five to seven ranked, costed actions
-built from your specific risk profile. If you rent, you only get actions a
-tenant is legally allowed to take. The plan exports to a one-page PDF.
+what you can spend — and Claude returns five ranked, costed actions built from
+your specific risk profile. If you rent, you only get actions a tenant is
+legally allowed to take. The plan exports to a one-page PDF.
 
 **Street Audit.** Drop in a photo of your street. Claude's vision model reads the
 surfaces — asphalt, lawn, canopy, roof colour — estimates coverage, scores how
 well the spot handles heat, and names three interventions that would cool it
 down.
+
+**And a summary.** The three features run as four pages, with the current step
+in the URL hash so the back button works and a refresh keeps your place. The
+last page collects everything. It recomputes nothing — every figure came from
+the step that produced it — and it names the steps you skipped rather than
+leaving a gap that could be screenshotted as a finished report.
 
 ## How I built it
 
@@ -96,10 +102,20 @@ now asks for a street number and explains why.
 
 **A dial that claimed to be "Measured" when it never was.** Someone asked me a
 simple question — is the data in this app real? Checking it properly, I found
-that Open-Meteo's air quality is CAMS *model* output on a 45 km grid, not a
-sensor reading, and my UI had been calling it "Measured" for three phases. It
-now says modelled, credits CAMS, and states the resolution. After that fix, no
-dial in the app claims to be a direct measurement, which is the honest position.
+that Open-Meteo's air quality is CAMS *model* output, not a sensor reading, and
+my UI had been calling it "Measured" for three phases. It now says modelled and
+credits CAMS. After that fix, no dial in the app claims to be a direct
+measurement, which is the honest position.
+
+The sequel is better. Someone asked why an address read 62 when Google showed
+30–40. My number was right: it is the European AQI, and CAMS returns exactly
+that. The same call returns **US AQI 86** from the same concentrations — one set
+of air, two indices, twenty-four points apart, because the scales are built
+differently. But checking it turned up a claim of *mine* that failed: the
+disclosure said "45 km grid cell", and probing five coordinates around Sydney
+showed the service snapping to a 0.1° grid, with points 7 km apart returning the
+same cell. I could not stand behind 45 km, so it now states what was observed —
+and shows both indices, so nobody else has to ask.
 
 **Two fabricated citations, caught before release.** Building the Street Audit I
 attributed two cooling figures to "Wang et al." and "Sharma et al." I had
@@ -107,6 +123,22 @@ verified neither — my sources gave titles and journals, never authorship. I'd
 invented two plausible-looking author names in the one feature specifically
 about not doing that. They're now cited by title and venue, and there is no
 unverified author name anywhere in the codebase.
+
+**Re-reading every source, and finding four numbers wrong.** Late on, I went
+back and opened every cooling figure's source rather than trusting the citation
+attached to it. Three were exactly right. Four were not. One range — 1.18–1.26 °C
+for replacing paving with planting — traced to nothing at all; a two-decimal
+range with no author is a fabrication signature, and it was the same one I had
+already been caught by once. A second, "up to 1.87 °C" for shading walls, was
+equally unattributable; I deleted that intervention rather than hunt for a
+number to fit, because the vertical-greenery literature spans 0.66 °C to
+7.14 °C and picking from that spread is invention with extra steps. A third
+range was wider than the paper it cited. A fourth was a figure sitting inside an
+EPA citation that the EPA page does not contain. The planting entry is now the
+Bowler et al. (2010) systematic review's actual finding — a park averaged
+0.94 °C cooler by day — and because that review reports a mean rather than a
+range, the UI now renders a point estimate as "about −0.9 °C" instead of forcing
+an invented spread around it.
 
 **A ranking rule that was exactly backwards.** The spec said "sort by impact per
 dollar." Implemented literally, dividing impact by cost made cost the only thing
@@ -142,9 +174,8 @@ been live and working every day since, with every phase pushed as it landed.
 ## What I learned
 
 The most useful thing I learned is how much work the word "measured" is doing,
-and how easily it's wrong. Reanalysis is not measurement. A 45 km model grid
-cell is not a sensor on your street. A downscaled projection is not a
-observation. Getting those labels right turned out to matter more to whether I'd
+and how easily it's wrong. Reanalysis is not measurement. A model grid cell is
+not a sensor on your street. A downscaled projection is not an observation. Getting those labels right turned out to matter more to whether I'd
 trust this app than any feature in it.
 
 I also learned that a check can be confidently wrong. At one point I compared
@@ -158,6 +189,15 @@ And I learned the difference between asking a model for a constraint and
 enforcing one. Every honesty guarantee in this project that actually holds is a
 guarantee in code — a filter, a schema without a field, a validator — not a
 sentence in a prompt.
+
+That lesson cost me a third time, right at the end. I cut the plan from seven
+actions to five by writing "Exactly 5 actions" in the response schema and again
+in the prompt. It returned five locally and **six** on production, from
+identical code. A JSON-schema `description` is advisory: the model reads it as
+guidance and complies most of the time, which is the worst possible failure mode
+because it passes whichever test you happen to run. The count is now enforced
+after ranking and after the renter filter. Asking is a preference; only code is
+a contract.
 
 ## What's next for Verge
 

@@ -16,31 +16,49 @@ exact coordinate out of real observational and projection data, turns it into a
 ranked, costed plan of things you can do this month, and grades your street from
 a photo.
 
+It runs as four pages — Risk, Plan, Street, Summary — with the current step in
+the URL hash, so the browser back button works and a refresh keeps your place.
+The summary recomputes nothing: every number on it came from the step that
+produced it, and it says plainly which steps you skipped rather than leaving a
+convincing-looking gap.
+
 Three features, and only three:
 
 1. **Risk Lens** — four dimensions scored 0 to 100 for your coordinate: heat,
    flood, air, and drought and fire weather, each with a plain-language verdict
    and the numbers behind it.
-2. **Adaptation Planner** — five to seven ranked actions with estimated cost,
-   effort and payback. Renters only ever see actions they are allowed to take.
-   Exports to a one-page PDF.
+2. **Adaptation Planner** — five ranked actions with estimated cost, effort and
+   payback. Renters only ever see actions they are allowed to take. Exports to a
+   one-page PDF.
 3. **Street Audit** — drop in a photo of your street and get a cooling score,
    the surfaces detected in the frame, and three specific interventions.
 
 ## Status
 
-**Phase 5 of 6 — polish.** All three features work end to end against live data
-and are deployed. Address lookup, four scored risk dimensions, the
-observed-versus-projected chart, the Claude-generated adaptation plan with PDF
-export, and the vision-based street audit are all working at the live URL.
+**Phase 6 of 6 — submission.** All three features work end to end against live
+data and have been deployed continuously since Phase 1. Address lookup, four
+scored risk dimensions, the observed-versus-projected chart, the
+Claude-generated adaptation plan with PDF export, and the vision-based street
+audit all work at the live URL.
 
-Remaining: the pitch video and the Devpost write-up.
+Remaining: the pitch video.
 
 The build is logged honestly, including the mistakes, in
-[DECISIONS.md](DECISIONS.md) — two fabricated citations caught before release,
-a flood score that moved 50 points because a street-level query resolved 570 m
-away, a lazy import that tripled the bundle because one static import defeated
-it, and an air-quality dial that claimed to be "Measured" when it never was.
+[DECISIONS.md](DECISIONS.md). A representative sample:
+
+- **Four fabricated or overstated cooling figures**, found by re-opening every
+  cited source and reading it. Two had no attributable source at all; one range
+  was wider than the paper it cited; one number was attributed to an EPA page
+  that does not contain it. The corrections are in the table below.
+- **A flood score that moved 50 points** because a street-level query resolved
+  570 m up the road into a hollow. The maths was right; the question was
+  misleading.
+- **An air-quality dial labelled "Measured"** when it had never measured
+  anything — it is CAMS model output.
+- **A "0 / 100 — Depleted" verdict** that a scoring change would have printed
+  over unsurveyed country, caught before it shipped.
+- **A lazy import that tripled the bundle**, because one remaining static import
+  defeated it.
 
 ## Screenshots
 
@@ -55,10 +73,18 @@ it, and an air-quality dial that claimed to be "Measured" when it never was.
 interventions whose temperature ranges come from cited literature rather than
 from the model.
 
+![Summary](docs/screenshots/06-summary-desktop.png)
+
+**Summary** — the fourth page. Nothing here is recomputed; each figure comes
+from the step that produced it, and a step you skipped says so instead of
+leaving a gap.
+
 ![Mobile](docs/screenshots/05-risk-lens-mobile.png)
 
 Regenerate these with `node scripts/screenshots.mjs` while the dev server is
-running.
+running. The Street Audit shot is skipped automatically unless a photograph is
+present at `test-photos/` — it has to be one whose licence allows publishing,
+since it ends up in this README.
 
 ## Running it
 
@@ -101,9 +127,14 @@ Published references used in the scoring maths, all named in
 [`src/lib/scoring.ts`](src/lib/scoring.ts) next to the code that uses them:
 
 - European Air Quality Index band structure (European Environment Agency).
-  Applied to CAMS model output via Open-Meteo — an 11 km grid over Europe and
-  45 km elsewhere, so this is a modelled concentration for a grid cell, not a
-  sensor reading. The UI labels it modelled for that reason.
+  Applied to CAMS model output via Open-Meteo, served on a 0.1° grid — probing
+  five coordinates around Sydney, points 7 km apart return the same cell. This
+  is a modelled concentration for a grid cell, not a sensor reading, and the UI
+  labels it modelled for that reason. The disclosure also shows the **US AQI for
+  the same reading**, because the two indices are scored differently and
+  disagree sharply: 62 on the European scale and 86 on the US scale from one set
+  of concentrations. Neither is wrong, and someone comparing our number against
+  another app has no way to know that without seeing both.
 - WHO 2021 global air quality guidelines, 24-hour means: PM2.5 15 µg/m³,
   PM10 45 µg/m³.
 - Chandler Burning Index (Chandler et al., 1983), a temperature and
@@ -168,7 +199,12 @@ This section is the point, not boilerplate.
 - **No emissions scenario is claimed** until the exact SSP served by the
   Open-Meteo climate API has been confirmed against its documentation.
 - **Costs are estimates in USD**, labelled as estimates everywhere they appear.
-  They are not quotes.
+  They are not quotes. The budget bands are coarse spending tiers pitched at US
+  prices, not a currency conversion of anything.
+- **What the model estimates, and what it does not.** The plan's costs, effort
+  hours and impact scores, and the audit's surface percentages, are the model's
+  judgements and carry the word "estimate" on screen. Every figure on the four
+  risk dials is real observational or projection data. The two are never mixed.
 - **Cooling effect ranges are published figures, not model output.** The Street
   Audit's vision model estimates surface composition and chooses which
   interventions apply; it never produces a temperature. Its response schema has
