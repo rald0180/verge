@@ -961,3 +961,36 @@ carrying the wrong currency would have been a trap for the next change.
 $100–$500 and so on — now read as USD rather than AUD. They are coarse
 thresholds rather than converted figures, so nobody is being shown an exchange
 rate that does not exist, but they are not a currency conversion either.
+
+---
+
+## 2026-08-30 — Budget bands re-pitched for US costs
+
+The bands kept their old numbers when costs moved to USD, so they were an AUD
+ladder wearing a dollar sign. Asked to convert them.
+
+**Not converted at an exchange rate.** A$100 / A$500 / A$2,000 at market rate
+is US$65 / US$325 / US$1,300 — accurate, unmemorable, and not how anyone thinks
+about a home budget. Nobody plans a project around "under $325". The bands are
+input categories the user picks, not figures we present as fact, so the right
+move was to pitch them at the tiers a US household actually shops in:
+
+| Band | What it buys |
+|---|---|
+| Under $150 | Supplies, no trades |
+| $150 – $600 | A weekend project |
+| $600 – $2,500 | A significant purchase or a small contractor job |
+| Over $2,500 | Contractor work and larger installations |
+
+The top band moved furthest, and deliberately: "over $2,000" barely covers a
+small contractor job in the US, so the old ceiling made "larger works are in
+scope" close to untrue. Each band now carries that description into the prompt
+rather than only a number, which gives the model the intent behind the
+threshold instead of leaving it to infer one.
+
+**The enum changed on both sides of the wire**, so the failure mode worth
+checking was a client sending a band the server no longer accepts. Verified
+directly: `600-2500` returns 200, and the retired `500-2000` returns a typed
+400 rather than a crash or a silently empty plan.
+
+Header lockup tightened again, 8 px to 4 px between the mark and the wordmark.

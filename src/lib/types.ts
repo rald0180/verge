@@ -174,8 +174,16 @@ export interface RiskProfile {
 
 export type DwellingType = 'house' | 'apartment' | 'sharehouse'
 export type Tenure = 'own' | 'rent'
-/** Budget bands in USD. Kept coarse on purpose: three inputs, nothing more. */
-export type BudgetBand = 'under-100' | '100-500' | '500-2000' | 'over-2000'
+/**
+ * Budget bands in USD. Kept coarse on purpose: three inputs, nothing more.
+ *
+ * Pitched at US costs rather than converted from the old AUD ladder at an
+ * exchange rate — a rate conversion would have produced $65 / $325 / $1,300,
+ * which is neither memorable nor how anyone thinks about a home budget. These
+ * are the tiers a US household actually shops in: supplies, a weekend project,
+ * a significant purchase, and work that needs a contractor.
+ */
+export type BudgetBand = 'under-150' | '150-600' | '600-2500' | 'over-2500'
 
 export interface DwellingProfile {
   readonly type: DwellingType

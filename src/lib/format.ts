@@ -119,10 +119,10 @@ export const TENURE_LABELS: Readonly<Record<Tenure, string>> = {
 }
 
 export const BUDGET_LABELS: Readonly<Record<BudgetBand, string>> = {
-  'under-100': 'Under $100',
-  '100-500': '$100 – $500',
-  '500-2000': '$500 – $2,000',
-  'over-2000': 'Over $2,000',
+  'under-150': 'Under $150',
+  '150-600': '$150 – $600',
+  '600-2500': '$600 – $2,500',
+  'over-2500': 'Over $2,500',
 }
 
 /** "$120" / "$1,400". Whole dollars — cents are noise on an estimate. */
