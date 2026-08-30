@@ -828,3 +828,64 @@ get through is now reported as too-large rather than unreadable.
 **It also closed the oldest open question in the project.** The audit had only
 ever seen a synthetic image of flat colour blocks. Testing the resize with a
 real street photo finally answered whether the perception works, and it does.
+
+---
+
+## 2026-08-30 — Four pages instead of one scroll
+
+Explored four alternative products first (docs/CONCEPTS.md) and built the
+wildlife one far enough to judge it — the census works, on branch `habitat` at
+73252c3, with real biodiversity data and 19 tests. Decision was to stay with
+climate adaptation, so that branch is parked rather than deleted.
+
+Then restructured the presentation. The three features are unchanged; what
+changed is that each is now its own page with a summary at the end.
+
+**The step lives in the URL hash.** Turning one scrolling page into four takes
+the browser's back button away from the user — on a phone, back would leave the
+app entirely rather than returning to the previous step, which is exactly what
+someone opening a link for the first time will press. Mirroring the step into
+the hash restores back and forward for free and survives a refresh. A router
+would also do it, but that is a dependency and a build config for one piece of
+state that was already an enum.
+
+Because the URL is now the source of truth for which page you are on, it has to
+be policed rather than trusted: a bookmarked `#summary`, or a back button press
+after a reset, lands on a step whose data does not exist. Anything past the
+first step bounces back when there is no risk profile.
+
+**The summary recomputes nothing.** Every number on it came from the step that
+produced it. A summary that re-derived its own figures could disagree with the
+flow that built it, which is the same failure as the chart and the heat dial
+using different baseline windows — fixed once already in Phase 2.
+
+### Two bugs found by looking at it
+
+**Ticks were derived from position, not from work done.** The progress rail
+marked every step before the current one complete, so walking straight to the
+summary showed Risk, Plan and Street all ticked while the plan and audit had
+never run. The summary underneath honestly said "no plan built yet" and the
+rail above it said the plan was done. Completion is now built from actual
+results — a profile, a plan, an audit — and the two agree.
+
+**The guard effect ran on every render.** It depended on the `unlocked` array,
+which is rebuilt each render and so is a new identity every time. Not an
+infinite loop, since it only acts when the step is locked, but it fired
+constantly for nothing. It now depends on a boolean, and the two step arrays
+are hoisted to module scope.
+
+### Design
+
+- "STEP ONE / Risk Lens" sat directly under a rail already reading "1 RISK" —
+  the same fact twice. The eyebrows now say something the rail does not:
+  "Where you live", "What to do about it", "What your street is made of".
+- Added a page transition, 300 ms ease-out, no bounce, skipped under reduced
+  motion. Without it the content simply swaps between frames and nothing tells
+  the user the page changed — a cost of pages that the old scroll did not have.
+- Connector lines between the rail's steps, lit only for transitions that have
+  actually been completed.
+- Header lockup gap tightened from 16 px to 8 px.
+
+**Known limitation.** The Street Audit does not technically need an address —
+it reads a photograph — but it is gated behind one anyway to keep the flow
+coherent and to guarantee the summary always has a place to be about.
