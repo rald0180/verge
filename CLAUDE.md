@@ -100,6 +100,28 @@ Upload or drag in a photo of your street, yard, or balcony. Claude vision analys
 
 This is the ninety-second video moment. It carries Technology and Originality.
 
+### Presentation: four pages, still three features
+
+Amended 2026-08-30. The three features are presented as a four-page flow —
+Risk, Plan, Street, Summary — rather than one long scroll. Each step renders on
+its own, and the current step is mirrored into the URL hash so the browser back
+button works and a refresh keeps your place.
+
+**The summary is a view, not a fourth feature.** It recomputes nothing; every
+number on it was already produced by the step that owns it, so it cannot
+disagree with the flow that built it. Scope is still locked at three.
+
+Two rules the flow has to keep:
+
+* Steps after the first need a resolved address, because the plan and the
+  summary are both about one coordinate. Arriving at a locked step by URL,
+  refresh or back button bounces to the first step rather than rendering an
+  empty page.
+* The progress rail ticks a step only when that step actually produced
+  something, never merely because the user walked past it. Both middle steps
+  are skippable, and a tick on a skipped step would have the rail claim work
+  that was never done.
+
 ### Explicit non-goals
 
 No accounts. No login. No database. No user data leaves the browser except the API calls. No map of the whole world. No leaderboard. No social feed. No mobile app. No blockchain, ever.
@@ -147,7 +169,7 @@ verge/
 │   └── audit.ts          # serverless: image -> cooling score JSON
 └── src/
     ├── main.tsx
-    ├── App.tsx
+    ├── App.tsx            # the four-page flow; each step renders alone
     ├── index.css
     ├── lib/
     │   ├── geocode.ts
@@ -158,9 +180,11 @@ verge/
     ├── hooks/
     │   ├── useRiskProfile.ts
     │   ├── usePlan.ts         # added Phase 3: /api/plan state machine
+    │   ├── useStep.ts         # added Phase 6: which page, mirrored to the URL hash
     │   └── useStreetAudit.ts
     └── components/
-        ├── layout/       AppShell, Header, SectionHeading
+        ├── layout/       AppShell, Header, SectionHeading, StepNav, StepFooter, StepPage
+        ├── summary/      SummaryPage
         ├── ui/           Card, Button, Field, Badge, Skeleton, ErrorState
         ├── lens/         AddressSearch, RiskDial, RiskGrid, TrendChart, Verdict
         ├── planner/      DwellingForm, ActionCard, PlanList, PlanPdf
