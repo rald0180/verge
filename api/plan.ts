@@ -44,15 +44,26 @@ export const maxDuration = 60
 const MAX_TOKENS = 12_000
 
 /**
- * `medium` rather than the `high` default, and measured rather than guessed.
+ * Thinking depth.
  *
- * Swept against real output: `low` returns in ~23s versus ~29s, but drops the
- * ceiling-insulation top-up — the highest-impact intervention available to a
- * Perth house — in favour of filler scoring 35. Six seconds is not worth that
- * on the feature carrying Originality. Observed range at `medium` is 28-35s
- * against a 60s ceiling, which is adequate headroom.
+ * Measured on 30 Aug 2026 against the live API, two runs each:
+ *
+ *   effort medium   26.0s, 23.7s   ~2050 output tokens
+ *   effort low      21.3s, 23.3s   ~1475 output tokens
+ *
+ * Low is kept: a 28% drop in generated tokens for no visible loss in the
+ * plans themselves, which stayed at seven specific, correctly-gated actions.
+ *
+ * FAST MODE IS NOT AVAILABLE HERE. `speed: 'fast'` with the
+ * fast-mode-2026-02-01 beta is the one lever that would genuinely halve this,
+ * but it has its own quota and this account's is zero — the API answers
+ * "rate limit of 0 fast mode input tokens per minute" in about 3 seconds
+ * every time. Worth retrying if the account ever gets fast-mode capacity.
+ *
+ * What is left is generation time for ~1,500 tokens, which is simply what it
+ * costs. The wait is made legible in the UI rather than pretended away.
  */
-const EFFORT = 'medium' as const
+const EFFORT = 'low' as const
 
 const MODEL = 'claude-opus-5'
 

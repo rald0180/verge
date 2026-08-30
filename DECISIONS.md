@@ -1114,3 +1114,57 @@ problem in place.
 
 **Caption removed** from under the Restart button. It was the last of the
 explanatory copy; the button's label carries it.
+
+---
+
+## 2026-08-30 — Making the planner faster, and what the ceiling actually is
+
+The page itself renders instantly; what takes time is the plan being written.
+Measured before changing anything, two runs per configuration against the live
+API:
+
+| Configuration | Wall time | Output tokens |
+|---|---|---|
+| effort `medium` (previous) | 26.0s, 23.7s | ~2,050 |
+| effort `low` | 21.3s, 23.3s | ~1,475 |
+
+**Effort dropped to `low` and stays there.** 28% fewer generated tokens for no
+visible loss: still seven specific actions, still correctly renter-gated, still
+grounded in the scores. Roughly 15% off the wall time.
+
+**Fast mode would have been the real win, and this account cannot use it.**
+`speed: 'fast'` with the `fast-mode-2026-02-01` beta runs the same model at up
+to 2.5x the output rate, which would have taken this under ten seconds. It has
+its own quota, and ours is zero — the API answers in about three seconds with
+"rate limit of 0 fast mode input tokens per minute". Two attempts, same result,
+so this is a hard limit rather than load. Reverted, and the constant's docblock
+records it so the next person does not re-derive it.
+
+What remains is generation time for ~1,500 tokens, which is what it costs.
+
+**So the wait is made legible instead of pretended away.** The loading state
+now counts elapsed seconds against the measured typical: "8s elapsed · usually
+about 20".
+
+Deliberately not a progress bar. Nothing in the response says how far through
+the generation is, so a bar would have to invent its own position — a
+fabricated number wearing a different hat, and the same objection as every
+other number this project refuses to make up. An elapsed count with a stated
+typical does the honest version of the same job.
+
+**The lever not pulled.** Asking for five actions instead of seven would cut
+roughly another 28% of output tokens and about the same share of the wait. That
+trades product for speed and CLAUDE.md section 2 specifies 5 to 7, so it is the
+human's call, not mine.
+
+### Header unpinned
+
+Made static. It had been `sticky top-0`, holding 61 px of every screen for a
+wordmark the reader had already seen — expensive on a phone, where scrolling
+exists to get more content into view. Verified: `header.top` now tracks to
+-400 and -1000 as the page scrolls, instead of staying at 0.
+
+Note this reverses the earlier reading of "should not move with the page". The
+complaint that time was the translucent background letting content show
+through; that fix stands. This is the separate question of whether it should
+occupy the viewport at all, and the answer is no.

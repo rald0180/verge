@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Download, ListChecks } from 'lucide-react'
 
@@ -51,6 +51,39 @@ async function downloadPlanPdf(plan: AdaptationPlan): Promise<void> {
   window.setTimeout(() => URL.revokeObjectURL(url), 10_000)
 }
 
+/**
+ * Seconds elapsed, ticking, while the plan is being written.
+ *
+ * WHY A COUNTER AND NOT A PROGRESS BAR. The request takes about twenty
+ * seconds, measured, and nothing in the response says how far through it is —
+ * a bar would have to invent its own position, which is a fabricated number
+ * wearing a different hat. An honest elapsed count against a stated typical
+ * duration does the real job: it says the app is alive and roughly how much
+ * longer.
+ *
+ * Its own component because the loading branch returns early, and a hook
+ * cannot live behind a condition.
+ */
+function ElapsedNote() {
+  const [seconds, setSeconds] = useState(0)
+
+  useEffect(() => {
+    const id = window.setInterval(() => setSeconds((value) => value + 1), 1000)
+    return () => window.clearInterval(id)
+  }, [])
+
+  return (
+    <div className="flex flex-col items-center gap-2 text-center">
+      <p className="text-sm text-zinc-400">
+        Reading your risk profile and working out what is worth doing.
+      </p>
+      <p className="text-xs uppercase tracking-widest text-zinc-500">
+        {seconds}s elapsed · usually about 20
+      </p>
+    </div>
+  )
+}
+
 export function PlanList({ plan, loading = false, error, onRetry }: PlanListProps) {
   const [exporting, setExporting] = useState(false)
   const [exportError, setExportError] = useState<ApiError | undefined>(undefined)
@@ -81,10 +114,7 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
   if (loading) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-zinc-400">
-          Reading your risk profile and working out what is worth doing. This takes
-          about half a minute!
-        </p>
+        <ElapsedNote />
         {[0, 1, 2].map((index) => (
           <Card key={index}>
             <div className="space-y-4">

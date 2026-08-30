@@ -54,18 +54,21 @@ function VergeMark({ className }: { readonly className?: string }) {
 }
 
 /**
- * The pinned header.
+ * The header. Sits at the top of the document and scrolls away with it.
  *
- * The background is OPAQUE on purpose. It was `bg-canvas/80` with an 8 px
- * backdrop blur, which let the page scroll visibly through the wordmark — the
- * address line ghosting behind "verge" read as the header sliding along with
- * the content. It was pinned correctly the whole time; the see-through
- * background was what looked wrong. Solid background, and the blur goes with
- * it, since blurring nothing only costs a compositing layer.
+ * It used to be `sticky top-0`, which held 61 px of every screen for a
+ * wordmark the reader had already seen — expensive on a phone, where the whole
+ * point of scrolling is to get more content into view. Static gives that back.
+ *
+ * The background stays OPAQUE. It was `bg-canvas/80` with an 8 px backdrop
+ * blur, which let the page scroll visibly through the wordmark; that
+ * translucency is what made a correctly-pinned header look like it was
+ * sliding. The blur went with it, since blurring an opaque surface only costs
+ * a compositing layer.
  */
 export function Header() {
   return (
-    <header className="sticky top-0 z-10 border-b border-white/10 bg-canvas">
+    <header className="border-b border-white/10 bg-canvas">
       <div className="mx-auto flex max-w-5xl items-center justify-center gap-1 px-6 py-3 md:px-8">
         <VergeMark className="h-9 w-9 shrink-0 text-accent" />
 
