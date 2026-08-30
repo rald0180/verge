@@ -116,8 +116,14 @@ export function PlanList({ plan, loading = false, error, onRetry }: PlanListProp
 
   return (
     <div className="space-y-4">
+      {/*
+        plan.summary is deliberately NOT rendered here. It is two model-written
+        sentences restating the risk profile the user has just read on step one,
+        and on screen it read as padding above the actions. It is still
+        generated and still goes into the exported PDF, where a document opened
+        cold does need a line of orientation.
+      */}
       <div className="flex flex-col items-center gap-4">
-        <p className="max-w-2xl text-center text-sm text-zinc-400">{plan.summary}</p>
         <Button variant="ghost" size="sm" loading={exporting} onClick={() => void handleExport()}>
           <Download className="h-4 w-4" aria-hidden="true" />
           Save as PDF

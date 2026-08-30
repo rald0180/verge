@@ -40,7 +40,16 @@ export function Interventions({ interventions }: InterventionsProps) {
               Published range at {intervention.scaleNote}.
             </p>
 
-            <p className="text-xs text-zinc-500">{intervention.sourceNote}</p>
+            {/*
+              intervention.sourceNote is deliberately not rendered. The full
+              citation ran to three sentences per card and buried the number it
+              was supporting. The figure is still labelled as a published range
+              at a stated scale, and every source is in README.md with a link —
+              which is where CLAUDE.md section 7 requires them to be. The field
+              is kept on the payload as the in-code link between a figure and
+              where it came from; deleting it would leave the numbers in
+              api/audit.ts with no provenance at all.
+            */}
           </div>
         </Card>
       ))}

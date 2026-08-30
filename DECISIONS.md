@@ -889,3 +889,41 @@ are hoisted to module scope.
 **Known limitation.** The Street Audit does not technically need an address —
 it reads a photograph — but it is gated behind one anyway to keep the flow
 coherent and to guarantee the summary always has a place to be about.
+
+---
+
+## 2026-08-30 — Trimming three blocks of copy from steps two and three
+
+**The planner summary is gone from the screen, not from the PDF.** It was two
+model-written sentences restating the risk profile the user had just read on
+step one, and above the action cards it read as padding. It could not be
+edited the way the other removals were — it is generated per request, so there
+was no fixed string to delete, only the choice of whether to render it. The
+schema still asks for it and `PlanPdf` still prints it, because a PDF opened
+cold a week later does need a line of orientation that a screen mid-flow does
+not.
+
+**The audit caveat lost its closing clause.** "…measured in other places under
+other conditions — they are not a prediction for this address." The clause
+before it already says the ranges were measured elsewhere under other
+conditions, so the deleted words were restating the point rather than adding
+one. The caveat is still rendered and still non-optional.
+
+**The full citation came off the intervention cards.** Three sentences of
+provenance under each figure buried the number they were supporting. What
+stays on screen: the range, what it measures, and the scale it was measured at
+— so nothing is presented as more certain than it is.
+
+This one needed care, because CLAUDE.md section 7 requires the cooling
+estimates to be cited. They are, in README.md, which carries all six with
+links — checked before removing rather than after. The `sourceNote` field is
+kept on the payload rather than deleted: it is the only in-code link between a
+number in `api/audit.ts` and where that number came from, and stripping it
+would leave the figures with no provenance at the point they are defined. The
+comment in types.ts saying it is "rendered under the figure" was updated at the
+same time, since a comment describing behaviour that no longer happens is worse
+than no comment.
+
+**Verified live rather than assumed** — one real plan call and one real audit
+call through the UI, asserting that the caveat survived and both removed
+strings were absent from the rendered page.

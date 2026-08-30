@@ -553,7 +553,7 @@ export default async function handler(
     surfaces,
     interventions,
     caveat:
-      'Surface percentages are a vision model’s estimate from one photograph, not a survey. The cooling figures are published ranges for each type of intervention, measured in other places under other conditions — they are not a prediction for this address.',
+      'Surface percentages are a vision model’s estimate from one photograph, not a survey. The cooling figures are published ranges for each type of intervention, measured in other places under other conditions.',
   }
 
   const body: ApiResult<CoolingAudit> = ok(audit)

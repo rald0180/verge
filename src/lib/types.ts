@@ -274,7 +274,14 @@ export interface Intervention {
   readonly measures: 'air temperature' | 'surface temperature' | 'indoor peak temperature'
   /** The study scale the figure came from, e.g. "neighbourhood scale". */
   readonly scaleNote: string
-  /** Full citation, rendered under the figure. */
+  /**
+   * Full citation for the range.
+   *
+   * Not rendered — it was three sentences per card and buried the figure it
+   * supported. It stays on the payload as the in-code provenance for each
+   * number; the reader-facing citations live in README.md, per CLAUDE.md
+   * section 7.
+   */
   readonly sourceNote: string
 }
 
