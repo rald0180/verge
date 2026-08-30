@@ -28,7 +28,7 @@ export function AppShell({ children }: AppShellProps) {
           <p>
             Verge reads live data from Open-Meteo and OpenStreetMap. Flood figures are
             indicative estimates built from elevation and rainfall history, not a
-            substitute for an official flood map. Costs are estimates in AUD.
+            substitute for an official flood map. Costs are estimates in USD.
           </p>
         </div>
       </footer>

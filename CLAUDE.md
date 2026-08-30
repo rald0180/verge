@@ -84,7 +84,7 @@ This is the screen the judges will see first. It carries Design and Technology.
 The risk profile plus a few answers about the dwelling go to Claude, which returns a ranked plan.
 
 * Three quick inputs, nothing more: dwelling type (house, apartment, sharehouse), own or rent, budget band.
-* Claude returns 5 to 7 actions as strict JSON, each with: title, what it does, which risk it reduces, estimated cost in AUD, effort in hours, an impact score, and a payback note.
+* Claude returns 5 to 7 actions as strict JSON, each with: title, what it does, which risk it reduces, estimated cost in USD, effort in hours, an impact score, and a payback note.
 * Actions are ranked by impact with a bounded penalty for cost, and rendered as cards. (Amended 2026-08-29, Phase 5: a literal impact-per-dollar ratio was degenerate — dividing by cost made cost the only variable, so a $0 admin task outranked ceiling insulation 200 to 1 and the two most effective actions sorted last. The penalty is now capped at 15 points, so impact stays dominant. Reasoning in api/plan.ts.) Renters get renter-legal actions only. This detail matters and judges notice it.
 * The whole plan exports to a single-page PDF. This is what makes it feel like a real product rather than a demo.
 
@@ -308,7 +308,7 @@ The video is worth as much as a feature. Budget a full day for it, not an hour.
 
 * Flood risk from elevation and rainfall history is **indicative only**. Every flood figure carries that label in the UI, and the README says the same. It is not a substitute for an official flood map.
 * Cooling effect estimates are ranges from published urban heat island literature, cited in `README.md`, applied to an AI estimate of surface composition. Both sources of uncertainty are stated in the UI.
-* Costs are AUD estimates and are labelled as estimates.
+* Costs are USD estimates and are labelled as estimates. (Amended 2026-08-30: were AUD. The prompt asks for US dollars too — relabelling Australian estimates as USD would have been a fabricated number under section 5.)
 * We say plainly in the README that the app was built with heavy AI assistance. It is the truth, judges can read a commit history, and owning it reads far better than being caught.
 
 ---

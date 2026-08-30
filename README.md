@@ -157,7 +157,7 @@ This section is the point, not boilerplate.
   not scored, rather than folded in via a multiplier we invented.
 - **No emissions scenario is claimed** until the exact SSP served by the
   Open-Meteo climate API has been confirmed against its documentation.
-- **Costs are estimates in AUD**, labelled as estimates everywhere they appear.
+- **Costs are estimates in USD**, labelled as estimates everywhere they appear.
   They are not quotes.
 - **Cooling effect ranges are published figures, not model output.** The Street
   Audit's vision model estimates surface composition and chooses which

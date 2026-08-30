@@ -12,7 +12,7 @@ interface ActionCardProps {
  * One recommended action.
  *
  * Every number here carries its unit and its framing: costs say "estimate",
- * because CLAUDE.md section 7 does not let an AUD figure from a language model
+ * because CLAUDE.md section 7 does not let a USD figure from a language model
  * stand on the page looking like a quote.
  */
 export function ActionCard({ action }: ActionCardProps) {
@@ -60,8 +60,8 @@ export function ActionCard({ action }: ActionCardProps) {
                 Estimated cost
               </dt>
               <dd className="text-sm text-zinc-100">
-                {formatCostRange(action.estimatedCostAud.low, action.estimatedCostAud.high)}
-                <span className="text-zinc-500"> estimate, AUD</span>
+                {formatCostRange(action.estimatedCostUsd.low, action.estimatedCostUsd.high)}
+                <span className="text-zinc-500"> estimate, USD</span>
               </dd>
             </div>
           </div>

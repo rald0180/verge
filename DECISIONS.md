@@ -927,3 +927,37 @@ than no comment.
 **Verified live rather than assumed** — one real plan call and one real audit
 call through the UI, asserting that the caveat survived and both removed
 strings were absent from the rendered page.
+
+---
+
+## 2026-08-30 — Costs in USD, which meant changing the prompt too
+
+Asked to switch the estimated costs from AUD to USD. Renaming the label alone
+would have been the wrong change and a dishonest one: the system prompt said
+"You advise Australian householders" and "Costs are Australian dollars", so
+flipping only the display would have printed Australian estimates under a USD
+sign. That is a fabricated number in the plainest sense, and CLAUDE.md
+section 5 rules it out.
+
+So the prompt changed with it. The audience line no longer hardcodes Australia
+— it tells the model to use the place name it is given to keep products,
+agencies and tenancy norms plausible for wherever the address actually is. The
+app already worked anywhere on earth, since Nominatim and Open-Meteo are global;
+the prompt was the only thing pinning it to one country.
+
+Verified against a Washington DC address rather than assumed. The plan came
+back citing NFIP flood cover, a sewer backup rider, DC's 311 line and a flash
+flood watch "issued for the District", with distances in feet and inches and
+costs like $60–$180. Nothing Australian survived, and the same request against
+a Perth address still returns Australian agencies.
+
+`estimatedCostAud` was renamed to `estimatedCostUsd` through the type, the
+response schema, the validator, the ranking function, the card and the PDF —
+the field name is part of the contract the model fills in, so leaving it
+carrying the wrong currency would have been a trap for the next change.
+`formatAud` became `formatUsd` with the en-US locale.
+
+**Known limitation.** The budget bands are unchanged numbers — under $100,
+$100–$500 and so on — now read as USD rather than AUD. They are coarse
+thresholds rather than converted figures, so nobody is being shown an exchange
+rate that does not exist, but they are not a currency conversion either.

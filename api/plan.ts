@@ -62,10 +62,10 @@ const TENURES: readonly string[] = ['own', 'rent']
 const BUDGETS: readonly string[] = ['under-100', '100-500', '500-2000', 'over-2000']
 
 const BUDGET_GUIDANCE: Readonly<Record<BudgetBand, string>> = {
-  'under-100': 'under about $100 AUD in total',
-  '100-500': 'roughly $100 to $500 AUD in total',
-  '500-2000': 'roughly $500 to $2,000 AUD in total',
-  'over-2000': 'more than $2,000 AUD, so larger works are in scope',
+  'under-100': 'under about $100 USD in total',
+  '100-500': 'roughly $100 to $500 USD in total',
+  '500-2000': 'roughly $500 to $2,000 USD in total',
+  'over-2000': 'more than $2,000 USD, so larger works are in scope',
 }
 
 /**
@@ -92,7 +92,7 @@ const PLAN_SCHEMA: Record<string, unknown> = {
           'title',
           'what',
           'reduces',
-          'estimatedCostAud',
+          'estimatedCostUsd',
           'effortHours',
           'impactScore',
           'paybackNote',
@@ -106,7 +106,7 @@ const PLAN_SCHEMA: Record<string, unknown> = {
             description: 'Which risk dimensions this reduces.',
             items: { type: 'string', enum: ['heat', 'flood', 'air', 'dryfire'] },
           },
-          estimatedCostAud: {
+          estimatedCostUsd: {
             type: 'object',
             additionalProperties: false,
             required: ['low', 'high'],
@@ -129,11 +129,11 @@ const PLAN_SCHEMA: Record<string, unknown> = {
   },
 }
 
-const SYSTEM_PROMPT = `You advise Australian householders on adapting their home to climate risk.
+const SYSTEM_PROMPT = `You advise householders on adapting their home to climate risk. Use the place name you are given to keep products, agencies and tenancy norms plausible for where this address actually is.
 
 Write for someone standing in their own doorway, not for a policy audience. Every action must be something they could start this month.
 
-Costs are Australian dollars and are estimates, so give an honest range rather than a precise-looking single figure. Where you are unsure of a cost, widen the range rather than guessing narrowly.
+Costs are US dollars and are estimates, so give an honest range rather than a precise-looking single figure. Where you are unsure of a cost, widen the range rather than guessing narrowly.
 
 Mark renterSafe true only when a tenant could do it without the owner's permission and reverse it when they leave. Anything fixed to the building, anything requiring a tradesperson to alter the structure, and anything needing body corporate approval is not renter safe.
 
@@ -201,7 +201,7 @@ const clamp = (value: number, min: number, max: number): number =>
 function toAction(value: unknown, index: number): AdaptationAction | null {
   if (!isObject(value)) return null
 
-  const { title, what, reduces, estimatedCostAud, effortHours, impactScore, paybackNote, renterSafe } =
+  const { title, what, reduces, estimatedCostUsd, effortHours, impactScore, paybackNote, renterSafe } =
     value
 
   if (typeof title !== 'string' || title.trim().length === 0) return null
@@ -218,8 +218,8 @@ function toAction(value: unknown, index: number): AdaptationAction | null {
   )
   if (dimensions.length === 0) return null
 
-  if (!isObject(estimatedCostAud)) return null
-  const { low, high } = estimatedCostAud
+  if (!isObject(estimatedCostUsd)) return null
+  const { low, high } = estimatedCostUsd
   if (typeof low !== 'number' || !Number.isFinite(low)) return null
   if (typeof high !== 'number' || !Number.isFinite(high)) return null
 
@@ -232,7 +232,7 @@ function toAction(value: unknown, index: number): AdaptationAction | null {
     title: title.trim(),
     what: what.trim(),
     reduces: dimensions,
-    estimatedCostAud: { low: costLow, high: costHigh },
+    estimatedCostUsd: { low: costLow, high: costHigh },
     effortHours: clamp(effortHours, 0, 400),
     impactScore: Math.round(clamp(impactScore, 0, 100)),
     paybackNote: paybackNote.trim(),
@@ -267,7 +267,7 @@ const PENALTY_POINTS = 15
 const PENALTY_HALF_COST = 200
 
 function rankingWeight(action: AdaptationAction): number {
-  const midpoint = (action.estimatedCostAud.low + action.estimatedCostAud.high) / 2
+  const midpoint = (action.estimatedCostUsd.low + action.estimatedCostUsd.high) / 2
   const costPenalty = PENALTY_POINTS * (midpoint / (midpoint + PENALTY_HALF_COST))
   return action.impactScore - costPenalty
 }

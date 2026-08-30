@@ -76,7 +76,7 @@ export function PlanPdf({ plan }: PlanPdfProps) {
             <View style={styles.row}>
               <Text style={styles.label}>
                 Estimated cost:{' '}
-                {formatCostRange(action.estimatedCostAud.low, action.estimatedCostAud.high)} AUD
+                {formatCostRange(action.estimatedCostUsd.low, action.estimatedCostUsd.high)} USD
               </Text>
               <Text style={styles.label}>Effort: {formatEffort(action.effortHours)}</Text>
               <Text style={styles.label}>Impact: {action.impactScore} of 100</Text>

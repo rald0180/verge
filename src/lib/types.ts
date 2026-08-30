@@ -174,7 +174,7 @@ export interface RiskProfile {
 
 export type DwellingType = 'house' | 'apartment' | 'sharehouse'
 export type Tenure = 'own' | 'rent'
-/** Budget bands in AUD. Kept coarse on purpose: three inputs, nothing more. */
+/** Budget bands in USD. Kept coarse on purpose: three inputs, nothing more. */
 export type BudgetBand = 'under-100' | '100-500' | '500-2000' | 'over-2000'
 
 export interface DwellingProfile {
@@ -183,7 +183,7 @@ export interface DwellingProfile {
   readonly budget: BudgetBand
 }
 
-/** A cost range in AUD. Always a range, always labelled as an estimate. */
+/** A cost range in USD. Always a range, always labelled as an estimate. */
 export interface CostEstimate {
   readonly low: number
   readonly high: number
@@ -196,7 +196,7 @@ export interface AdaptationAction {
   readonly what: string
   /** Which of the four dimensions this reduces. At least one. */
   readonly reduces: readonly RiskDimension[]
-  readonly estimatedCostAud: CostEstimate
+  readonly estimatedCostUsd: CostEstimate
   readonly effortHours: number
   /** 0-100. The model's own estimate of how much this moves the needle. */
   readonly impactScore: number

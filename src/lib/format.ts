@@ -126,18 +126,18 @@ export const BUDGET_LABELS: Readonly<Record<BudgetBand, string>> = {
 }
 
 /** "$120" / "$1,400". Whole dollars — cents are noise on an estimate. */
-export function formatAud(amount: number): string {
-  return new Intl.NumberFormat('en-AU', {
+export function formatUsd(amount: number): string {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'AUD',
+    currency: 'USD',
     maximumFractionDigits: 0,
   }).format(amount)
 }
 
 /** "$120 – $400", always with the estimate framing applied by the caller. */
 export function formatCostRange(low: number, high: number): string {
-  if (low === high) return formatAud(low)
-  return `${formatAud(low)} – ${formatAud(high)}`
+  if (low === high) return formatUsd(low)
+  return `${formatUsd(low)} – ${formatUsd(high)}`
 }
 
 /** "2 hours" / "30 minutes" / "1 day". */
