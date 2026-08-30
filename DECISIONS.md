@@ -1238,3 +1238,19 @@ effort hours and impact scores, and the audit's surface percentages. Those are
 judgements, not measurements, and every one carries the word "estimate" on
 screen. The risk dials are unchanged and remain real observational and
 projection data.
+
+**Follow-up, same day: "exactly 5" was a request, not a guarantee.** Production
+returned six actions on the first check while the identical code returned five
+locally. A JSON-schema `description` is advisory — the model reads "Exactly 5
+actions" as guidance and complies most of the time, which is the worst kind of
+bug because it passes every test you happen to run.
+
+The cap already existed as a bare `.slice(0, 7)` left over from the old range,
+so the code was permitting seven while the prompt asked for five. It is now
+`ACTION_COUNT = 5`, applied after ranking and after the renter filter so the
+survivors are the best five the household can actually do. Three consecutive
+runs return five.
+
+Third time this pattern has paid off: the renter gate, the audit's missing
+temperature field, and now this. If a guarantee matters, enforce it in code —
+asking the model is a preference, not a contract.

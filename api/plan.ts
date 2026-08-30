@@ -67,6 +67,21 @@ const EFFORT = 'low' as const
 
 const MODEL = 'claude-opus-5'
 
+/**
+ * How many actions reach the user.
+ *
+ * ENFORCED HERE, NOT ASKED FOR. The response schema says "Exactly 5 actions"
+ * and the prompt says it again, but a schema `description` is advisory — the
+ * model reads it as guidance, not a constraint. Caught on production returning
+ * six for a request that returned five locally, from identical code: it is
+ * non-deterministic, so asking is not a guarantee.
+ *
+ * The slice runs after ranking and after the renter filter, so what survives is
+ * the best five the household can actually do, not the first five the model
+ * happened to write.
+ */
+const ACTION_COUNT = 5
+
 const DIMENSIONS: readonly RiskDimension[] = ['heat', 'flood', 'air', 'dryfire']
 const DWELLING_TYPES: readonly string[] = ['house', 'apartment', 'sharehouse']
 const TENURES: readonly string[] = ['own', 'rent']
@@ -519,7 +534,7 @@ export default async function handler(
 
   const actions = [...permitted]
     .sort((a, b) => rankingWeight(b) - rankingWeight(a))
-    .slice(0, 7)
+    .slice(0, ACTION_COUNT)
     // Renumber so ids match display order and stay stable as React keys.
     .map((action, index) => ({ ...action, id: `action-${index + 1}` }))
 
