@@ -93,11 +93,6 @@ export function HomePage({ onSearch, loading = false, error }: HomePageProps) {
           )
         })}
       </ul>
-
-      <p className="text-center text-xs text-zinc-500">
-        Built on live observational and projection data. Nothing is stored, and no
-        account is needed.
-      </p>
     </div>
   )
 }
