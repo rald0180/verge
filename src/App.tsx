@@ -3,6 +3,7 @@ import { ImagePlus, MapPin } from 'lucide-react'
 
 import { AddressSearch } from './components/lens/AddressSearch'
 import { AppShell } from './components/layout/AppShell'
+import { HomePage } from './components/home/HomePage'
 import { Badge } from './components/ui/Badge'
 import { Button } from './components/ui/Button'
 import { Card } from './components/ui/Card'
@@ -103,6 +104,13 @@ export default function App() {
    * the summary are both about one specific coordinate.
    */
   const hasProfile = profile !== undefined
+
+  /**
+   * The flow has begun once an address is submitted, not once it resolves —
+   * otherwise arriving at the Risk step while the five climate requests are
+   * still in flight would bounce straight back to the home page.
+   */
+  const started = hasProfile || busy
   const unlocked: readonly Step[] = hasProfile ? ALL_STEPS : LENS_ONLY
 
   /**
@@ -124,8 +132,14 @@ export default function App() {
    * identity on every render, which would run this effect on every render.
    */
   useEffect(() => {
+    if (step === 'home') return
+    if (!started) {
+      // A bookmarked #summary, or a refresh after the state was lost.
+      go('home')
+      return
+    }
     if (!hasProfile && step !== 'lens') go('lens')
-  }, [step, hasProfile, go])
+  }, [step, started, hasProfile, go])
 
   /**
    * Clear every answer and go back to the beginning.
@@ -141,25 +155,31 @@ export default function App() {
     lens.reset()
     planner.reset()
     audit.reset()
-    go('lens')
+    go('home')
   }, [lens, planner, audit, go])
 
   return (
     <AppShell>
-      <StepNav current={step} unlocked={unlocked} completed={completed} onGo={go} />
+      {step === 'home' ? null : (
+        <StepNav current={step} unlocked={unlocked} completed={completed} onGo={go} />
+      )}
+
+      {step === 'home' ? (
+        <StepPage stepKey="home">
+          <HomePage
+            onSearch={(query) => {
+              planner.reset()
+              void lens.load(query)
+              go('lens')
+            }}
+            loading={busy}
+            {...(lensError ? { error: lensError.message } : {})}
+          />
+        </StepPage>
+      ) : null}
 
       {step === 'lens' ? (
         <StepPage stepKey="lens">
-          <section className="space-y-4 pt-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-zinc-100 md:text-5xl">
-              Climate adaptation that starts at your front door
-            </h1>
-            <p className="mx-auto max-w-2xl text-sm text-accent-text">
-              Climate reports tell you the planet is in trouble. Verge tells you what to do about
-              your house.
-            </p>
-          </section>
-
           <section className="space-y-8">
             <SectionHeading eyebrow="Where you live" title="Risk Lens" />
 
@@ -199,6 +219,7 @@ export default function App() {
             )}
 
             <StepFooter
+              onBack={() => go('home')}
               onNext={() => go('plan')}
               nextLabel="Build a plan"
               {...(profile ? {} : { nextBlockedReason: 'Check an address to continue.' })}

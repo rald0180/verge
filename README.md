@@ -16,8 +16,10 @@ exact coordinate out of real observational and projection data, turns it into a
 ranked, costed plan of things you can do this month, and grades your street from
 a photo.
 
-It runs as four pages — Risk, Plan, Street, Summary — with the current step in
-the URL hash, so the browser back button works and a refresh keeps your place.
+It opens on a home page whose only job is to take an address, then runs as four
+pages — Risk, Plan, Street, Summary — with the current step in the URL hash, so
+the browser back button works and a refresh keeps your place. The wordmark
+returns you to the front door from anywhere.
 The summary recomputes nothing: every number on it came from the step that
 produced it, and it says plainly which steps you skipped rather than leaving a
 convincing-looking gap.
@@ -72,6 +74,12 @@ The build is logged honestly, including the mistakes, in
 **Street Audit** — surfaces read from a photograph, a cooling score, and three
 interventions whose temperature ranges come from cited literature rather than
 from the model.
+
+*This one shot predates the four-page layout.* Regenerating it needs a street
+photograph whose licence allows publishing, and the app is deliberately not
+willing to put an arbitrary one in a public README — see the note under
+`scripts/screenshots.mjs`. The feature itself is current; only the picture of it
+is old.
 
 ![Summary](docs/screenshots/06-summary-desktop.png)
 

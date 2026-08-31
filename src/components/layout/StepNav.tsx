@@ -2,10 +2,10 @@ import { Fragment } from 'react'
 import { Check, Lock } from 'lucide-react'
 
 import { cx } from '../../lib/format'
-import { STEPS } from '../../hooks/useStep'
-import type { Step } from '../../hooks/useStep'
+import { NAV_STEPS } from '../../hooks/useStep'
+import type { NavStep, Step } from '../../hooks/useStep'
 
-const LABELS: Readonly<Record<Step, string>> = {
+const LABELS: Readonly<Record<NavStep, string>> = {
   lens: 'Risk',
   plan: 'Plan',
   audit: 'Street',
@@ -39,11 +39,11 @@ export function StepNav({ current, unlocked, completed, onGo }: StepNavProps) {
   return (
     <nav aria-label="Progress" className="mx-auto w-full max-w-xl">
       <ol className="flex items-start justify-center">
-        {STEPS.map((step, index) => {
+        {NAV_STEPS.map((step, index) => {
           const isCurrent = step === current
           const isDone = completed.includes(step)
           const isUnlocked = unlocked.includes(step)
-          const previous = STEPS[index - 1]
+          const previous = NAV_STEPS[index - 1]
           const connectorLit = previous !== undefined && completed.includes(previous)
 
           return (

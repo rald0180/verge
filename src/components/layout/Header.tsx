@@ -69,12 +69,23 @@ function VergeMark({ className }: { readonly className?: string }) {
 export function Header() {
   return (
     <header className="border-b border-white/10 bg-canvas">
-      <div className="mx-auto flex max-w-5xl items-center justify-center gap-1 px-6 py-3 md:px-8">
-        <VergeMark className="h-9 w-9 shrink-0 text-accent" />
+      <div className="mx-auto flex max-w-5xl items-center justify-center px-6 py-3 md:px-8">
+        {/*
+          The lockup is the way back to the front door. Every app does this, and
+          without it the home page is unreachable once you are inside the flow —
+          the progress rail only covers the four numbered steps.
+        */}
+        <a
+          href="#home"
+          aria-label="Verge home"
+          className="flex items-center gap-1 rounded-2xl px-2 py-1 transition-colors duration-300 ease-out hover:bg-white/[0.03]"
+        >
+          <VergeMark className="h-9 w-9 shrink-0 text-accent" />
 
-        <p className="text-3xl font-bold lowercase leading-none tracking-tight text-zinc-100">
-          verge
-        </p>
+          <p className="text-3xl font-bold lowercase leading-none tracking-tight text-zinc-100">
+            verge
+          </p>
+        </a>
       </div>
     </header>
   )

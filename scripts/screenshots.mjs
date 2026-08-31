@@ -8,12 +8,15 @@ const ADDRESS = 'Rokeby Rd, Subiaco WA'
 /**
  * A photograph for the Street Audit shot.
  *
- * `test-photos/` is gitignored, so this is present on a developer's machine and
- * absent in a clean clone. The audit screenshot is skipped rather than faked
- * when it is missing — and it must be a photo whose licence allows publishing,
- * since the screenshot goes into a public README.
+ * OPT-IN ON PURPOSE, via `AUDIT_PHOTO=path node scripts/screenshots.mjs`.
+ *
+ * This screenshot ends up in a public README, so the photograph has to be one
+ * whose licence allows publishing. Defaulting to whatever happens to sit in
+ * `test-photos/` once regenerated the shot from a Google Street View capture,
+ * watermark and all, which had to be caught and reverted before commit. Making
+ * it explicit means that cannot happen by accident.
  */
-const AUDIT_PHOTO = 'test-photos/street-1-2940px.png'
+const AUDIT_PHOTO = process.env.AUDIT_PHOTO ?? ''
 
 const setInput = async (page, value) => {
   await page.evaluate((v) => {
@@ -79,22 +82,6 @@ await run('03-plan-desktop', 1440, 1100, async (page) => {
   await buildPlan(page)
 })
 
-// 4. Street audit, desktop — only when a publishable photo is available.
-if (existsSync(AUDIT_PHOTO)) {
-  await run('04-street-audit-desktop', 1440, 1100, async (page) => {
-    await search(page, ADDRESS)
-    await page.getByRole('button', { name: /Build a plan/ }).click()
-    await pause(600)
-    await page.getByRole('button', { name: /Audit my street/ }).click()
-    await pause(600)
-    await page.setInputFiles('input[type=file]', AUDIT_PHOTO)
-    await page.waitForSelector('text=/Cooling score/', { timeout: 150000 })
-    await pause(1500)
-  })
-} else {
-  console.log(`  skipped 04-street-audit-desktop — no photo at ${AUDIT_PHOTO}`)
-}
-
 // 5. Summary, desktop — the fourth page, with a real plan on it
 await run('06-summary-desktop', 1440, 1100, async (page) => {
   await search(page, ADDRESS)
@@ -109,3 +96,19 @@ await run('06-summary-desktop', 1440, 1100, async (page) => {
 await run('05-risk-lens-mobile', 390, 844, async (page) => {
   await search(page, ADDRESS)
 })
+
+// 4. Street audit, desktop — only when a publishable photo is available.
+if (AUDIT_PHOTO && existsSync(AUDIT_PHOTO)) {
+  await run('04-street-audit-desktop', 1440, 1100, async (page) => {
+    await search(page, ADDRESS)
+    await page.getByRole('button', { name: /Build a plan/ }).click()
+    await pause(600)
+    await page.getByRole('button', { name: /Audit my street/ }).click()
+    await pause(600)
+    await page.setInputFiles('input[type=file]', AUDIT_PHOTO)
+    await page.waitForSelector('text=/Cooling score/', { timeout: 150000 })
+    await pause(1500)
+  })
+} else {
+  console.log('  skipped 04-street-audit-desktop — set AUDIT_PHOTO=<publishable photo> to capture it')
+}

@@ -1,18 +1,30 @@
 import { useCallback, useEffect, useState } from 'react'
 
-/** The four pages of the flow, in order. */
-export const STEPS = ['lens', 'plan', 'audit', 'summary'] as const
+/**
+ * The numbered flow, in order. These are the four the progress rail shows.
+ */
+export const NAV_STEPS = ['lens', 'plan', 'audit', 'summary'] as const
+
+/**
+ * Every page the hash can address, including the front door.
+ *
+ * `home` is deliberately outside NAV_STEPS: it is where the app starts, not a
+ * step you complete, and numbering it would make a four-step flow look like a
+ * five-step one.
+ */
+export const STEPS = ['home', ...NAV_STEPS] as const
 
 export type Step = (typeof STEPS)[number]
+export type NavStep = (typeof NAV_STEPS)[number]
 
 function isStep(value: string): value is Step {
   return (STEPS as readonly string[]).includes(value)
 }
 
 function readHash(): Step {
-  if (typeof window === 'undefined') return 'lens'
+  if (typeof window === 'undefined') return 'home'
   const raw = window.location.hash.replace(/^#/, '')
-  return isStep(raw) ? raw : 'lens'
+  return isStep(raw) ? raw : 'home'
 }
 
 export interface UseStep {

@@ -1254,3 +1254,55 @@ runs return five.
 Third time this pattern has paid off: the renter gate, the audit's missing
 temperature field, and now this. If a guarantee matters, enforce it in code —
 asking the model is a preference, not a contract.
+
+---
+
+## 2026-08-30 — A home page, so it opens like an app
+
+The first screen was step one of the wizard: a hero, an address field, and a
+large empty card explaining that nothing would appear until you typed
+something. That is a form with a headline, not a front door.
+
+There is now a home page whose only job is to take an address. Three short
+lines say what the address buys — your risk, your plan, your street — and
+submitting one drops you straight onto the Risk step with the profile already
+loading.
+
+**It is not a fifth step.** The progress rail still shows four, and the home
+page sits outside it: it is where the app starts, not something you complete,
+and numbering it would make a four-step flow look like five. Same argument as
+the summary page, and scope is still the three features CLAUDE.md locks.
+
+**The wordmark is now the way back.** Without it the home page becomes
+unreachable the moment you enter the flow, because the rail only covers the
+numbered steps. This is the convention every app already uses, so it needs no
+explaining.
+
+### Getting the guard right
+
+Splitting the entrance from the first step changed what "started" means. The
+guard originally bounced anything without a resolved profile back to the first
+step, but the profile does not exist yet while the five climate requests are in
+flight — so arriving at the Risk step immediately after submitting would have
+bounced straight home again. `started` is therefore "an address has been
+submitted", not "a profile exists". Verified: `#summary` with no profile lands
+on `#home`, a search from home lands on `#lens`, and the profile survives every
+round trip through the front door.
+
+### A test bug that looked exactly like an app bug
+
+The first verification reported the profile lost on returning to `#lens`. It was
+not. `OVERALL RISK` is rendered uppercase by CSS, `innerText` returns what is
+rendered, and my check was a case-sensitive `includes('Overall risk')` — while
+the Playwright locator that had just passed was case-insensitive. Two checks of
+the same thing disagreeing, and the stricter-looking one was wrong. Second time
+this session: the same mistake hid the elapsed counter.
+
+### Screenshot script hardened
+
+Regenerating the shots once rebuilt the Street Audit image from a Google Street
+View capture sitting in `test-photos/`, watermark and all, and it had to be
+caught and reverted before commit. The audit shot is now opt-in
+(`AUDIT_PHOTO=<path>`) rather than picking up whatever is on disk, and it runs
+last so a failure there cannot block the other five. The committed audit
+screenshot is consequently older than the rest, which README now says outright.

@@ -103,11 +103,19 @@ This is the ninety-second video moment. It carries Technology and Originality.
 ### Presentation: four pages, still three features
 
 Amended 2026-08-30. The three features are presented as a four-page flow —
-Risk, Plan, Street, Summary — rather than one long scroll. Each step renders on
-its own, and the current step is mirrored into the URL hash so the browser back
-button works and a refresh keeps your place.
+Risk, Plan, Street, Summary — rather than one long scroll, entered from a home
+page. Each step renders on its own, and the current step is mirrored into the
+URL hash so the browser back button works and a refresh keeps your place.
 
-**The summary is a view, not a fourth feature.** It recomputes nothing; every
+**The home page is the front door, not a step.** It is outside the numbered
+rail, which stays at four: it is where the app starts rather than something you
+complete, and numbering it would make a four-step flow look like five. Its only
+job is to take an address; the three-line preview exists to make that field look
+worth using. The wordmark returns to it from anywhere, because the rail covers
+only the numbered steps.
+
+**Neither the home page nor the summary is a feature.** The summary is a view
+over work already done, and the home page is an entrance to it. It recomputes nothing; every
 number on it was already produced by the step that owns it, so it cannot
 disagree with the flow that built it. Scope is still locked at three.
 
@@ -184,6 +192,7 @@ verge/
     │   └── useStreetAudit.ts
     └── components/
         ├── layout/       AppShell, Header, SectionHeading, StepNav, StepFooter, StepPage
+        ├── home/         HomePage
         ├── summary/      SummaryPage
         ├── ui/           Card, Button, Field, Badge, Skeleton, ErrorState
         ├── lens/         AddressSearch, RiskDial, RiskGrid, TrendChart, Verdict
