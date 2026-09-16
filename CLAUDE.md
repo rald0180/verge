@@ -7,16 +7,20 @@
 
 ## 0. Ground truth about the competition
 
-Re-verified against the live Devpost page and its rules and dates pages on
-29 Aug 2026. If any of them changed, stop and re-check before acting.
+Re-verified against the live Devpost page and its dates page on **16 Sep 2026**.
+If any of them changed, stop and re-check before acting.
+
+**THE DEADLINE MOVED.** Devpost announced a one-week extension after this file
+was last checked. The old 13 Sep date recorded here had already passed by the
+time it was re-read, which would have been a catastrophic thing to trust.
 
 | Item | Value |
 |---|---|
 | Event | NextStep Hacks 2026 |
 | Theme (actual) | **"Earth Forward"** — environmental impact, explicitly including **climate resilience**, renewable energy, conservation, sustainable agriculture, waste reduction. It is NOT "AI & Social Good". |
-| Hacking window | Opens 21 Aug 2026 12:00am EDT, closes 13 Sep 2026 5:00pm EDT |
-| Deadline | 13 Sep 2026, 5:00pm EDT (14 Sep 2026, 5:00am Perth time) |
-| Judging | 14–17 Sep. Winners announced 18 Sep, 9:00am EDT |
+| Hacking window | Opens 21 Aug 2026 12:00am EDT, closes **20 Sep 2026 5:00pm EDT** (extended by one week) |
+| Deadline | **20 Sep 2026, 5:00pm EDT** (21 Sep 2026, 5:00am Perth time) |
+| Judging | 20–25 Sep. Winners announced **26 Sep, 9:00am EDT** |
 | Required deliverables | Video demo **3 to 5 minutes**, public repo link, live app link, completed Devpost project page |
 | Judging criteria | Originality, Adherence to Track, Completion, Learning, Design, Technology |
 | Weightings | Not published. Assume equal. |
