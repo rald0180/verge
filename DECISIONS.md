@@ -1306,3 +1306,62 @@ caught and reverted before commit. The audit shot is now opt-in
 (`AUDIT_PHOTO=<path>`) rather than picking up whatever is on disk, and it runs
 last so a failure there cannot block the other five. The committed audit
 screenshot is consequently older than the rest, which README now says outright.
+
+---
+
+## 2026-09-16 — Submission prep, and a deadline that had already moved
+
+**The spec had the wrong deadline, and it mattered.** CLAUDE.md recorded 13 Sep,
+verified on 29 Aug. Re-read on 16 Sep, that date had already passed — the file
+was quietly asserting the hackathon was over. Devpost had extended by a week
+after the verification: submissions now close **20 Sep 5:00pm EDT**, judging
+runs to 25 Sep, winners 26 Sep. Section 0 corrected, and it now says the date
+moved rather than silently showing the new one.
+
+This is the second time in this project that a claim verified once and then
+trusted turned out to be stale. The first was a citation.
+
+**All the footage is unusable.** Every clip in `docs/footage/` is timestamped
+29–30 August; every UI change — home page, four-page flow, USD, five actions,
+static header — landed 30 Aug to 1 Sep. The clips show an app that no longer
+exists. Not fixable by editing: it has to be re-shot.
+
+**The script survived, mostly.** Checked the voiceover line by line against the
+current build. It made no claims the changes broke, with one exception: it said
+an air-quality dial was "a forty-five kilometre model grid cell", which is the
+figure retired two weeks ago when probing showed a 0.1° grid. Reading that on
+camera would have put a number in the video that the README explicitly
+disclaims.
+
+Rewritten around the current app: a shot list that matches the four-page flow,
+the summary page, and the source-audit story as the second Learning beat — a
+fabricated range with no source at all, in the one feature specifically about
+not inventing numbers, is a better thing to say out loud than the air-quality
+mislabel it replaces.
+
+**Timed it properly rather than guessing.** First draft came out at 626 spoken
+words, which is 4.8–5.4 minutes depending on pace — over the ceiling at any
+relaxed read. Cut to 555, which holds 3:58–4:45 across normal speaking speeds
+and only breaches five minutes at a deliberately slow one. The summary beat
+moved to an "if you run short" list rather than being deleted.
+
+**Numbers in the script are now placeholders.** The heat figures move with the
+live data — Subiaco has already shifted once. A voiceover quoting a number the
+screen disagrees with is the single most catchable error in a demo video, so the
+script says "the number on screen" and explains why.
+
+**Two smaller things found while checking.**
+
+`docs/VIDEO.md` carried a second copy of the script. Two copies drift, and then
+the one you read is not the one you edited to. It is now a production guide —
+capture settings, assembly, export, and the submission checklist — pointing at
+the script as the single source.
+
+`docs/DEVPOST.md` had **no prior-work statement**. The rules require entrants to
+say what existed before the hackathon; nothing did, but an empty field is not an
+answer. Added, with the commit history and this log as the evidence.
+
+`scripts/record.mjs` still drove the old single-page flow and would have failed
+immediately. Rewritten for the four pages, defaulting to the deployed URL rather
+than localhost, and the audit shot is opt-in behind `AUDIT_PHOTO` for the same
+licensing reason the screenshot script is.

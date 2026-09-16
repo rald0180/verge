@@ -27,6 +27,16 @@ to you should hear the same person.
 - Live app: https://verge-ebon.vercel.app
 - Source: https://github.com/rald0180/verge
 
+## Prior work
+
+**None.** Verge was built entirely inside the hackathon window, starting from an
+empty directory after submissions opened on 21 August 2026. No code, design or
+research predates it.
+
+The commit history is public and shows the whole build in sequence, and
+`DECISIONS.md` in the repo is a dated log of what was built when — including the
+things that broke and had to be redone.
+
 ---
 
 ## Inspiration

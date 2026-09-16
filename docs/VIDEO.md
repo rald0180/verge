@@ -1,217 +1,100 @@
-# Pitch video — script and shot list
+# Pitch video — production guide
 
-**Target length 3:50.** NextStep Hacks requires **3 to 5 minutes**; anything
-under three is non-compliant. This script runs comfortably inside the window
-with room for pauses.
+**The words and the shot list live in [VOICEOVER-SCRIPT.md](VOICEOVER-SCRIPT.md).**
+This file is everything else: how to capture, how to cut, how to export, and
+what has to be true before you submit.
 
-Raw footage is in `docs/footage/`, recorded with `node scripts/record.mjs`
-against the live app. Every frame is the real product — nothing is mocked.
+This used to carry a second copy of the script. It does not any more — two
+scripts drift apart, and then the one you read is not the one you edited to.
+
+---
+
+## The hard requirement
+
+**3 to 5 minutes.** The minimum is as real as the maximum: a two-minute cut is
+non-compliant no matter how good it is. Deadline **20 Sep 2026, 5:00pm EDT** —
+21 Sep, 5:00am Perth.
 
 ---
 
 ## Before you record
 
-**Re-record shot 05 with a photo of your actual street.** The committed footage
-uses a synthetic test image of flat colour blocks. It proves the pipeline but it
-looks like a diagram, and it is the single weakest frame in the cut. A real
-photo of a Perth street — bitumen, a verge, a jacaranda — makes the Street Audit
-land, and it is the shot judges will remember.
+- **Ignore `docs/footage/`.** Every clip in it is from 29–30 August and shows an
+  app that no longer exists — single scrolling page, Australian dollars, seven
+  actions, a sticky translucent header. Re-shoot everything.
+- Use the live site, `https://verge-ebon.vercel.app`, not localhost. The URL bar
+  is evidence that it is deployed, and judges score Completion.
+- Hide bookmarks, close other tabs, and use a clean browser profile. A personal
+  bookmarks bar in the corner of a submission reads as careless.
+- Have the street photo ready — **one you took yourself.** The photo in
+  `test-photos/` is a Google Street View capture and is not yours to publish.
+- Do one full dry run of the app before recording. The plan call takes about
+  sixteen seconds and you want to know that, not discover it mid-take.
 
-Drop the photo into `public/`, point the recorder at it, and re-run just that
-shot.
+## Capture settings
 
----
+| Setting | Value |
+|---|---|
+| Resolution | 1920×1080, or 1440×900 scaled up |
+| Frame rate | 30 fps is plenty; 60 if your recorder defaults to it |
+| Browser zoom | 100%. Do not zoom to make text bigger — capture at a smaller window size instead |
+| Cursor | Visible. It shows a person driving the app |
+| Audio | Record separately from the screen. Never rely on capture-time audio |
 
-## Script
+For the mobile shot, use the browser's device emulation at 390px wide rather
+than filming a phone. It reads cleaner and matches the screenshots.
 
-### 0:00 – 0:22 · Cold open
+## Recording the voiceover
 
-> **Footage:** `01-hero` — the landing page, slow scroll.
+- Quietest room you have, soft furnishings, microphone close.
+- One take per section, not one take for the whole thing. The script is already
+  split at the timestamps.
+- Record thirty seconds of room silence before you start. Your editor can use it
+  to subtract background hiss.
+- Leave a breath either side of every `[BEAT]`. You can always tighten a pause
+  in the edit; you cannot invent one.
 
-**VO:**
-> Every climate report tells you the same thing. The planet is in trouble.
-> Degrees of warming. Emissions by 2050.
->
-> None of it tells you what to do about *your house*.
->
-> This is Verge.
+## Assembly
 
-*On screen: hold on the line "Climate reports tell you the planet is in trouble.
-Verge tells you what to do about your house."*
+1. Lay the voiceover down first, in one track, and cut the silences.
+2. Drop the shots against it. The script's timestamps are the intended pacing,
+   not a rule — if a shot needs an extra second, take it.
+3. Where the app is thinking — the ~16s plan call, the audit — **cut it short**.
+   Nobody needs to watch a spinner. Trim to two seconds and let the result land.
+4. No music under the voiceover, or very low. The script carries the video.
+5. Do not add a title card longer than three seconds. The clock is tight.
 
----
+## Export and upload
 
-### 0:22 – 1:10 · Risk Lens
-
-> **Footage:** `02-risk-lens` — typing the address, skeletons, dials counting up,
-> scrolling through the verdicts.
-
-**VO:**
-> It starts with one address.
->
-> Verge pulls thirty-five years of recorded climate history for that exact
-> coordinate, and downscaled CMIP6 projections out to 2050, and scores four
-> things: heat, flood, air, and drought and fire weather.
->
-> This street sees about fifteen days a year over thirty-five degrees today.
-> By 2050 that's thirty-eight.
->
-> Every number shows its working. Where it came from. Whether it's measured,
-> modelled, or an estimate — because a number you can't check is a number you
-> shouldn't trust.
-
-*Hold on the evidence lines under a dial — the ERA5 and CMIP6 attributions.*
-
----
-
-### 1:10 – 1:28 · The trend
-
-> **Footage:** `03-trend-chart`
-
-**VO:**
-> Grey is the historical record. Colour is the projection. They're drawn as two
-> separate lines, on purpose — so it's never ambiguous which half already
-> happened.
+- H.264 MP4, 1080p.
+- Upload to YouTube **unlisted** (not private — judges must be able to open it
+  without an invite) or Vimeo.
+- Put the link in the Devpost project's video field. Check it plays in a logged
+  -out browser window before you submit.
 
 ---
 
-### 1:28 – 2:20 · Adaptation Planner
+## Submission checklist
 
-> **Footage:** `04-planner` — selecting Sharehouse, then "I rent it", then the
-> plan generating and scrolling.
+Work down this list on the day. Everything above the line is already done.
 
-**VO:**
-> Knowing your risk doesn't help if nobody tells you what to do about it.
->
-> Three questions. What you live in. Whether you own it. What you can spend.
->
-> Claude reads your actual risk profile and returns a ranked, costed plan — most
-> effective first.
->
-> And this bit matters: say you rent.
+- [x] App deployed and live at `https://verge-ebon.vercel.app`
+- [x] Repo public at `https://github.com/rald0180/verge`
+- [x] `README.md` current, with screenshots and cited sources
+- [x] `DECISIONS.md` — the honest build log, which is the Learning evidence
+- [x] Devpost copy drafted in [DEVPOST.md](DEVPOST.md)
+- [ ] Footage re-shot against the current build
+- [ ] Voiceover recorded
+- [ ] Video cut to **between 3:00 and 5:00**
+- [ ] Video uploaded, unlisted, link tested logged-out
+- [ ] Devpost page filled from `DEVPOST.md`
+- [ ] Devpost: video link, repo link, live link all present
+- [ ] **Submitted** — a filled-in Devpost draft is not a submission
 
-*Beat. Hold on the tenure toggle.*
+### Two things on the Devpost form that are easy to miss
 
-> Now every action is one a tenant can legally take. Not because the model was
-> asked nicely — because the server filters anything that isn't, after the
-> model answers.
->
-> The whole plan exports to a one-page PDF.
-
----
-
-### 2:20 – 3:00 · Street Audit
-
-> **Footage:** `05-street-audit` — the drop, the analysis, scrolling the
-> interventions. **Re-record with a real photo.**
-
-**VO:**
-> Then there's this.
->
-> Drop in a photo of your street. Verge reads the surfaces — the bitumen, the
-> lawn, the canopy, the dark roof — estimates how much of the frame each covers,
-> and scores how well this spot handles heat.
->
-> And it names three things that would cool it down.
->
-> Look at the numbers. Minus zero point three to one point five degrees. Air
-> temperature. Neighbourhood scale.
->
-> The model didn't write those. It *can't*. The response schema has no field for
-> a temperature. It picks which intervention fits; the degrees come from
-> published urban heat island research, cited on screen.
-
-*Hold on a citation line.*
-
----
-
-### 3:00 – 3:35 · How it's built, and what broke
-
-> **Footage:** `06-mobile`, then a screen recording of `DECISIONS.md` scrolling.
-
-**VO:**
-> Six live data sources. No mock data anywhere.
->
-> It's not been a clean run. The flood score for one street moved fifty points
-> between two days — the geocoder had resolved to a point five hundred metres
-> away, sitting in a hollow. Real result, misleading question.
->
-> An air quality dial said "Measured" for three phases. It never was — it's a
-> forty-five kilometre model grid cell. That's fixed, and it's written down.
->
-> Two citations got caught being fabricated before release. Also written down.
->
-> Every one of those is in the build log, in the repo.
-
----
-
-### 3:35 – 3:50 · Close
-
-> **Footage:** `01-hero` again, or a still.
-
-**VO:**
-> Climate adaptation that starts at your front door.
->
-> It's live, it's open source, and it works on your street.
-
-*On screen: the live URL and the repo URL, held for four seconds.*
-
----
-
-## Voiceover — read it yourself
-
-**Use [`VOICEOVER-SCRIPT.md`](VOICEOVER-SCRIPT.md), not the generated audio
-below.** Judges score Learning — "did the team stretch themselves?" — and a
-builder explaining their own decisions lands very differently from a narrator
-reading ad copy. The self-read script is first person, ~537 words, 3.6–4.5
-minutes depending on pace, and carries the mistakes as first-hand accounts.
-
-The generated files below remain as a fallback and as a pacing reference.
-
-## Generated voiceover (fallback)
-
-Generated with Higgsfield Seed Audio and committed to `docs/voiceover/`. These
-cost credits to produce, so they are tracked rather than gitignored.
-
-| File | Beat | Length |
-|---|---|---|
-| `01-hook-reid.wav` | Cold open | 15.7s |
-| `02-risk-lens-reid.wav` | Risk Lens | 27.3s |
-| `03-planner-reid.wav` | Adaptation Planner | 15.0s |
-| `04-audit-reid.wav` | Street Audit | 19.4s |
-| `05-close-reid.wav` | Close | 9.0s |
-| `01-hook-GRADY.wav` | Cold open, alternate voice | 14.7s |
-
-Total narration 1:26. The video must run **3 to 5 minutes**, so the narration
-does not fill it and is not meant to — it tops and tails each section while the
-screen recordings play underneath. Leave the demo breathing between lines.
-
-Two voices are included for the same hook line so you can A/B them: **Reid**
-(used for the full set) and **Grady**. If you prefer Grady, the other four lines
-need regenerating in that voice, which needs more credits.
-
-## Production notes
-
-What still needs a human:
-
-- **Voiceover.** Read it at a measured pace — the script is written for about
-  150 words a minute. Don't rush the Street Audit section.
-- **Music.** Something restrained. The subject is heat risk, not a product
-  launch; triumphant synth will undercut it.
-- **Titles.** Minimum: the product name at 0:15, section titles, and the two
-  URLs at the end.
-- **Captions.** Worth it. Judges may watch muted.
-
-The footage is `.webm`. Most editors take it directly; convert with
-`ffmpeg -i in.webm -c:v libx264 out.mp4` if yours doesn't.
-
-## Shot inventory
-
-| Clip | Use | Notes |
-|---|---|---|
-| `01-hero` | Open and close | Slow scroll over the hero |
-| `02-risk-lens` | 0:22–1:10 | Typing, skeletons, dials counting up, verdicts |
-| `03-trend-chart` | 1:10–1:28 | Observed against projected |
-| `04-planner` | 1:28–2:20 | Includes the renter toggle beat |
-| `05-street-audit` | 2:20–3:00 | **Re-record with a real photo** |
-| `06-mobile` | 3:00–3:35 | 390 px, proves it works on a phone |
+- **"Built With"** — the tag list is in `DEVPOST.md` under that heading. Judges
+  filter on it.
+- **Prior work.** The rules require you to state what existed before the
+  hackathon. Nothing did; this was built entirely inside the window, starting
+  21 August. Say so explicitly rather than leaving the field empty.
